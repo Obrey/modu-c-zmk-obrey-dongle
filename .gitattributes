@@ -1,0 +1,9 @@
+# BEGIN OBREY EOL FIX
+# Consistent text checkouts. Validator independently verifies upstream content.
+/vendor/modu-c-firmware/** text=auto eol=lf
+/scripts/*.py text eol=lf
+/tests/*.py text eol=lf
+/reference/*.json text eol=lf
+/reference/*.keymap text eol=lf
+/config/*.keymap text eol=lf
+# END OBREY EOL FIX

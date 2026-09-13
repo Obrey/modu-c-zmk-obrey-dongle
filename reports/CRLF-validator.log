@@ -1,0 +1,18 @@
+$ python3 scripts/validate.py
+{
+  "result": "PASS",
+  "layer_count": 5,
+  "binding_count": 335,
+  "matching_transform_positions": 67,
+  "build_targets": 5,
+  "trackball_channels": [
+    0,
+    1
+  ],
+  "vendor_content_verified_files": 45,
+  "vendor_exact_byte_matches": 6,
+  "vendor_line_ending_only_differences": 39,
+  "firmware_compiled": false,
+  "hardware_tested": false
+}
+

@@ -1,0 +1,9 @@
+$ git commit -m Local patched checkout test
+[main 076716e] Local patched checkout test
+ 8 files changed, 645 insertions(+), 11 deletions(-)
+ create mode 100644 .gitattributes
+ create mode 100644 reference/hardware-normalized-sha256.json
+ create mode 100644 reference/validation-fixture.keymap
+ create mode 100644 scripts/move_tab_column.py
+ create mode 100644 tests/test_line_endings.py
+

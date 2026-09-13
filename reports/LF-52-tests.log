@@ -1,0 +1,54 @@
+$ python3 -m unittest discover -s tests -p test_*.py
+Converted to uf2, output size: 512, start address: 0x26000
+Wrote 512 bytes to /tmp/tmpgvgm8h9h/out/modu_dongle.uf2
+Selected native UF2 for modu_left_dongle: /tmp/tmpqyik22ft/in/modu_left_dongle.uf2
+Selected native UF2 for modu_right_dongle: /tmp/tmpqyik22ft/in/modu_right_dongle.uf2
+Selected native UF2 for modu_dongle: /tmp/tmpqyik22ft/in/modu_dongle.uf2
+Selected native UF2 for modu_settings_reset: /tmp/tmpqyik22ft/in/modu_settings_reset.uf2
+Selected native UF2 for dongle_settings_reset: /tmp/tmpqyik22ft/in/dongle_settings_reset.uf2
+Verified modu_left_dongle.uf2: 1 blocks, sha256=bc59c8d4c56729186758b32f06ad2371b42539ead9a4e46e01dc807cdbaf5125
+Verified modu_right_dongle.uf2: 1 blocks, sha256=09f53442e6e1dc2a151946e2eee3c7f18d735f427caddab0ab0a9294df96bf57
+Verified modu_dongle.uf2: 1 blocks, sha256=14a7ce00de85c7d77b0ba29067a82b2933024154fa3f102f36d12ef17fcd583a
+Verified modu_settings_reset.uf2: 1 blocks, sha256=a2f0011f9d7eb025878cbb4de572285e77984abb5cb123763e93deeda540aa20
+Verified dongle_settings_reset.uf2: 1 blocks, sha256=44f73b4c0b9bb68561a694306717ac8d2a29cc1ba1fb4f5a9516a3fd6a5cc11b
+Selected native UF2 for modu_left_dongle: /tmp/tmp6g4n5zxi/in/modu_left_dongle.uf2
+Selected native UF2 for modu_right_dongle: /tmp/tmp6g4n5zxi/in/modu_right_dongle.uf2
+Selected native UF2 for modu_dongle: /tmp/tmp6g4n5zxi/in/modu_dongle.uf2
+Selected native UF2 for modu_settings_reset: /tmp/tmp6g4n5zxi/in/modu_settings_reset.uf2
+Selected native UF2 for dongle_settings_reset: /tmp/tmp6g4n5zxi/in/dongle_settings_reset.uf2
+Selected native UF2 for modu_left_dongle: /tmp/tmpgvgm8h9h/in/modu_left_dongle.uf2
+Selected native UF2 for modu_right_dongle: /tmp/tmpgvgm8h9h/in/modu_right_dongle.uf2
+Converting validated HEX for modu_dongle: /tmp/tmpgvgm8h9h/in/modu_dongle.hex
+Selected native UF2 for modu_settings_reset: /tmp/tmpgvgm8h9h/in/modu_settings_reset.uf2
+Selected native UF2 for dongle_settings_reset: /tmp/tmpgvgm8h9h/in/dongle_settings_reset.uf2
+Verified modu_left_dongle.uf2: 1 blocks, sha256=bc59c8d4c56729186758b32f06ad2371b42539ead9a4e46e01dc807cdbaf5125
+Verified modu_right_dongle.uf2: 1 blocks, sha256=09f53442e6e1dc2a151946e2eee3c7f18d735f427caddab0ab0a9294df96bf57
+Verified modu_dongle.uf2: 1 blocks, sha256=17d2cdaff97914e1965ac525a3937b6ff1beb12d7fa9a0e4bd8da676242003bb
+Verified modu_settings_reset.uf2: 1 blocks, sha256=a2f0011f9d7eb025878cbb4de572285e77984abb5cb123763e93deeda540aa20
+Verified dongle_settings_reset.uf2: 1 blocks, sha256=44f73b4c0b9bb68561a694306717ac8d2a29cc1ba1fb4f5a9516a3fd6a5cc11b
+Selected native UF2 for modu_left_dongle: /tmp/tmp31tdojov/in/modu_left_dongle.uf2
+Selected native UF2 for modu_right_dongle: /tmp/tmp31tdojov/in/modu_right_dongle.uf2
+Selected native UF2 for modu_dongle: /tmp/tmp31tdojov/in/modu_dongle.uf2
+Selected native UF2 for modu_settings_reset: /tmp/tmp31tdojov/in/modu_settings_reset.uf2
+Selected native UF2 for dongle_settings_reset: /tmp/tmp31tdojov/in/dongle_settings_reset.uf2
+Selected native UF2 for modu_left_dongle: /tmp/tmp7mso5qxw/in/modu_left_dongle.uf2
+Selected native UF2 for modu_right_dongle: /tmp/tmp7mso5qxw/in/modu_right_dongle.uf2
+Selected native UF2 for modu_dongle: /tmp/tmp7mso5qxw/in/modu_dongle.uf2
+Selected native UF2 for modu_settings_reset: /tmp/tmp7mso5qxw/in/modu_settings_reset.uf2
+Selected native UF2 for dongle_settings_reset: /tmp/tmp7mso5qxw/in/dongle_settings_reset.uf2
+Selected native UF2 for modu_left_dongle: /tmp/tmpivxhndo2/in/modu_left_dongle.uf2
+Selected native UF2 for modu_right_dongle: /tmp/tmpivxhndo2/in/modu_right_dongle.uf2
+Selected native UF2 for modu_dongle: /tmp/tmpivxhndo2/in/modu_dongle.uf2
+Selected native UF2 for modu_settings_reset: /tmp/tmpivxhndo2/in/modu_settings_reset.uf2
+Selected native UF2 for dongle_settings_reset: /tmp/tmpivxhndo2/in/dongle_settings_reset.uf2
+Selected native UF2 for modu_left_dongle: /tmp/tmpgbqddi7v/in/modu_left_dongle.uf2
+Selected native UF2 for modu_right_dongle: /tmp/tmpgbqddi7v/in/modu_right_dongle.uf2
+Selected native UF2 for modu_dongle: /tmp/tmpgbqddi7v/in/modu_dongle.uf2
+Selected native UF2 for modu_settings_reset: /tmp/tmpgbqddi7v/in/modu_settings_reset.uf2
+Selected native UF2 for dongle_settings_reset: /tmp/tmpgbqddi7v/in/dongle_settings_reset.uf2
+
+....................................................
+----------------------------------------------------------------------
+Ran 52 tests in 1.213s
+
+OK
