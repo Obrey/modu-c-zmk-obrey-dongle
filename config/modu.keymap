@@ -19,7 +19,6 @@
 #define L_MOUSE 2
 #define L_GAME  3
 #define L_FN    4
-
 #define ZMK_POINTING_DEFAULT_MOVE_VAL 1200
 #define ZMK_POINTING_DEFAULT_SCRL_VAL 25
 
@@ -32,17 +31,17 @@
 #include <dt-bindings/zmk/pointing.h>
 
 /* Only keyboard-generated mouse motion/scroll. Not the physical trackball. */
-&mmv_input_listener {
-    input-processors = <&zip_xy_scaler 2 1>;
-};
-&msc_input_listener {
-    input-processors = <&zip_scroll_scaler 2 1>;
-};
+
+&mmv_input_listener { input-processors = <&zip_xy_scaler 2 1>; };
+
+&msc_input_listener { input-processors = <&zip_scroll_scaler 2 1>; };
+
 &msc {
     acceleration-exponent = <1>;
     time-to-max-speed-ms = <100>;
     delay-ms = <0>;
 };
+
 &mmv {
     time-to-max-speed-ms = <500>;
     acceleration-exponent = <1>;
@@ -52,6 +51,7 @@
 / {
     behaviors {
         // Real combo-source dispatch. Standard &bootloader alone loses the side.
+
         boot135: boot135 {
             compatible = "zmk,behavior-obrey-combo-boot";
             #binding-cells = <0>;
@@ -60,6 +60,7 @@
             window-ms = <80>;
             bindings = <&bootloader>;
         };
+
         boot680: boot680 {
             compatible = "zmk,behavior-obrey-combo-boot";
             #binding-cells = <0>;
@@ -73,6 +74,7 @@
             compatible = "zmk,behavior-hold-tap";
             label = "HOMEROW_MODS";
             bindings = <&kp>, <&kp>;
+
             #binding-cells = <2>;
             tapping-term-ms = <200>;
             quick-tap-ms = <130>;
@@ -84,6 +86,7 @@
             compatible = "zmk,behavior-hold-tap";
             label = "HM250";
             bindings = <&kp>, <&kp>;
+
             #binding-cells = <2>;
             tapping-term-ms = <250>;
             quick-tap-ms = <130>;
@@ -96,6 +99,7 @@
         compatible = "zmk,combos";
 
         // Direct three-key combos. The custom behavior restores the actual side.
+
         combo_boot_135 {
             timeout-ms = <80>;
             require-prior-idle-ms = <300>;
@@ -103,6 +107,7 @@
             bindings = <&boot135>;
             layers = <L_BASE>;
         };
+
         combo_boot_680 {
             timeout-ms = <80>;
             require-prior-idle-ms = <300>;
@@ -112,28 +117,25 @@
         };
 
         /* No combo is active on Game or FnMedia. */
-        mouse {
-            timeout-ms = <50>;
-            key-positions = <41 62>;
-            bindings = <&tog L_MOUSE>;
-            layers = <L_BASE L_NAV L_MOUSE>;
-        };
+
         enter {
             timeout-ms = <50>;
             key-positions = <33 32>;
             bindings = <&kp ENTER>;
-            layers = <L_BASE>;
+            layers = <0>;
         };
+
         back_space {
             timeout-ms = <50>;
             key-positions = <31 32>;
             bindings = <&kp BACKSPACE>;
-            layers = <L_BASE>;
+            layers = <0>;
         };
 
         /* Intentional pairing-clear gesture: Nav held, then the 1 and 0 number keys together.
          * Not active on Game or FnMedia. Clears only the selected Bluetooth profile.
          */
+
         bluetooth_clear {
             timeout-ms = <50>;
             require-prior-idle-ms = <300>;
@@ -141,74 +143,93 @@
             bindings = <&bt BT_CLR>;
             layers = <L_NAV>;
         };
+
+        space {
+            bindings = <&kp SPACE>;
+            key-positions = <16 15>;
+            layers = <0>;
+            timeout-ms = <50>;
+        };
+
+        engkor {
+            bindings = <&kp CAPS>;
+            key-positions = <14 13>;
+            layers = <0>;
+            timeout-ms = <50>;
+        };
     };
 
     keymap {
         compatible = "zmk,keymap";
+
         // Base letters/home-row mods kept; new keys restore missing punctuation. 0 enters Game.
+
         default_layer {
             display-name = "Base";
             bindings = <
-                /* 00..11 */ &to L_GAME              &kp N1                  &kp N2                  &kp N3                  &kp N4                  &kp N5                  &kp N6                  &kp N7                  &kp N8                  &kp N9                  &kp N0                  &kp MINUS
-                /* 12..23 */ &mt LG(A) LG(Z)         &kp SLASH               &kp W                   &kp E                   &kp R                   &kp T                   &kp Y                   &kp U                   &kp I                   &kp O                   &kp SEMICOLON           &kp EQUAL
-                /* 24..35 */ &mt LG(X) LG(C)         &hm250 LCTRL A          &hm200 LALT S           &hm200 LEFT_GUI D       &hm200 LSHFT F          &kp G                   &kp H                   &hm200 LSHFT J          &hm200 LEFT_GUI K       &hm200 LALT L           &hm250 LCTRL P          &kp APOS
-                /* 36..47 */ &kp LG(V)               &kp Z                   &kp X                   &kp C                   &kp V                   &kp Q                   &kp N                   &kp M                   &kp B                   &kp COMMA               &kp PERIOD              &kp BSLH
-                /* 48..59 */ &kp TAB                 &kp LBKT                &kp RBKT                &none                   &none                   &none                   &none                   &none                   &none                   &kp GRAVE               &mkp LCLK               &mkp RCLK
-                /* 60..66 */ &kp ESC                 &kp SPACE               &lt L_NAV CAPSLOCK      &kp ENTER               &kp BACKSPACE           &lt L_FN DEL            &trans
+&to L_GAME       &kp N1          &kp N2              &kp N3             &kp N4          &kp N5  &kp N6     &kp N7          &kp N8             &kp N9         &kp N0          &kp MINUS
+&mt LG(A) LG(Z)  &kp SLASH       &kp W               &kp E              &kp R           &kp T   &kp Y      &kp U           &kp I              &kp O          &kp SEMICOLON   &kp EQUAL
+&mt LG(X) LG(C)  &hm250 LCTRL A  &hm200 LALT S       &hm200 LEFT_GUI D  &hm200 LSHFT F  &kp G   &kp H      &hm200 LSHFT J  &hm200 LEFT_GUI K  &hm200 LALT L  &hm250 LCTRL P  &kp APOS
+&kp LG(V)        &kp Z           &kp X               &kp C              &kp V           &kp Q   &kp N      &kp M           &kp B              &kp COMMA      &kp PERIOD      &kp BSLH
+&kp TAB          &kp LBKT        &kp RBKT            &none              &none           &none   &none      &none           &none              &kp GRAVE      &mkp LCLK       &mkp RCLK
+&kp ESC          &kp SPACE       &lt L_NAV CAPSLOCK                                             &kp ENTER  &kp BACKSPACE   &lt L_FN DEL       &trans
             >;
         };
 
         // Nav; node name lower_layer retained for compatibility with existing repo checks.
+
         lower_layer {
             display-name = "Nav";
             bindings = <
-                /* 00..11 */ &to L_BASE              &trans                  &trans                  &trans                  &trans                  &trans                  &trans                  &trans                  &trans                  &trans                  &trans                  &trans
-                /* 12..23 */ &trans                  &trans                  &trans                  &trans                  &trans                  &trans                  &trans                  &trans                  &kp UP                  &trans                  &trans                  &trans
-                /* 24..35 */ &trans                  &trans                  &kp LG(LC(LS(N4)))      &kp LG(LS(N5))          &trans                  &trans                  &kp TAB                 &kp LEFT                &kp DOWN                &kp RIGHT               &kp HOME                &trans
-                /* 36..47 */ &trans                  &trans                  &trans                  &trans                  &kp LG(LC(LS(N3)))      &trans                  &kp INS                 &kp PG_UP               &kp PG_DN               &kp END                 &kp RALT                &trans
-                /* 48..59 */ &trans                  &trans                  &trans                  &none                   &none                   &none                   &none                   &none                   &none                   &trans                  &trans                  &trans
-                /* 60..66 */ &trans                  &trans                  &trans                  &trans                  &trans                  &trans                  &none
+&to L_BASE  &trans  &trans              &trans          &trans              &trans  &trans   &trans     &trans     &trans     &trans    &trans
+&trans      &trans  &trans              &trans          &trans              &trans  &trans   &trans     &kp UP     &trans     &trans    &trans
+&trans      &trans  &kp LG(LC(LS(N4)))  &kp LG(LS(N5))  &trans              &trans  &kp TAB  &kp LEFT   &kp DOWN   &kp RIGHT  &kp HOME  &trans
+&trans      &trans  &trans              &trans          &kp LG(LC(LS(N3)))  &trans  &kp INS  &kp PG_UP  &kp PG_DN  &kp END    &kp RALT  &trans
+&trans      &trans  &trans              &none           &none               &none   &none    &none      &none      &trans     &trans    &trans
+&trans      &trans  &trans                                                          &trans   &trans     &trans     &none
             >;
         };
 
         // Mouse mode; 0 or left Escape returns to Base. 50 temporarily activates FnMedia.
+
         Mouse {
             display-name = "Mouse";
             bindings = <
-                /* 00..11 */ &to L_BASE              &trans                  &trans                  &trans                  &trans                  &trans                  &trans                  &trans                  &trans                  &trans                  &trans                  &trans
-                /* 12..23 */ &trans                  &kp LG(MINUS)           &kp LG(EQUAL)           &none                   &kp LG(RBKT)            &kp LG(LBKT)            &kp LG(LBKT)            &kp LG(RBKT)            &mmv MOVE_UP            &kp LG(EQUAL)           &kp LG(MINUS)           &trans
-                /* 24..35 */ &trans                  &none                   &mkp MCLK               &mkp RCLK               &mkp LCLK               &none                   &kp LG(LBKT)            &mmv MOVE_LEFT          &mmv MOVE_DOWN          &mmv MOVE_RIGHT         &trans                  &trans
-                /* 36..47 */ &trans                  &msc SCRL_RIGHT         &msc SCRL_LEFT          &msc SCRL_UP            &msc SCRL_DOWN          &trans                  &kp LG(RBKT)            &msc SCRL_UP            &msc SCRL_DOWN          &msc SCRL_LEFT          &msc SCRL_RIGHT         &trans
-                /* 48..59 */ &kp TAB                 &none                   &mo L_FN                &none                   &none                   &none                   &none                   &none                   &none                   &mkp MCLK               &mkp LCLK               &mkp RCLK
-                /* 60..66 */ &to L_BASE              &trans                  &trans                  &mkp RCLK               &mkp LCLK               &mkp MCLK               &none
+&to L_BASE  &trans           &trans          &trans        &trans          &trans        &trans        &trans          &trans          &trans           &trans           &trans
+&trans      &kp LG(MINUS)    &kp LG(EQUAL)   &none         &kp LG(RBKT)    &kp LG(LBKT)  &kp LG(LBKT)  &kp LG(RBKT)    &mmv MOVE_UP    &kp LG(EQUAL)    &kp LG(MINUS)    &trans
+&trans      &none            &mkp MCLK       &mkp RCLK     &mkp LCLK       &none         &kp LG(LBKT)  &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_RIGHT  &trans           &trans
+&trans      &msc SCRL_RIGHT  &msc SCRL_LEFT  &msc SCRL_UP  &msc SCRL_DOWN  &trans        &kp LG(RBKT)  &msc SCRL_UP    &msc SCRL_DOWN  &msc SCRL_LEFT   &msc SCRL_RIGHT  &trans
+&kp TAB     &none            &mo L_FN        &none         &none           &none         &none         &none           &none           &mkp MCLK        &mkp LCLK        &mkp RCLK
+&to L_BASE  &trans           &trans                                                      &mkp RCLK     &mkp LCLK       &mkp MCLK       &none
             >;
         };
 
         // Gaming: plain key/button presses; 0 returns to Base. Dot moved from 46 to 35.
+
         game {
             display-name = "Game";
             bindings = <
-                /* 00..11 */ &to L_BASE              &kp N1                  &kp N2                  &kp N3                  &kp N4                  &kp N5                  &kp N6                  &kp N7                  &kp N8                  &kp N9                  &kp N0                  &kp MINUS
-                /* 12..23 */ &kp TAB                 &kp SLASH               &kp W                   &kp E                   &kp R                   &kp T                   &kp Y                   &kp U                   &kp I                   &kp O                   &kp SEMICOLON           &kp EQUAL
-                /* 24..35 */ &kp LCTRL               &kp A                   &kp S                   &kp D                   &kp F                   &kp G                   &kp H                   &kp J                   &kp K                   &kp L                   &kp P                   &kp PERIOD
-                /* 36..47 */ &kp LSHFT               &kp Z                   &kp X                   &kp C                   &kp V                   &kp Q                   &kp N                   &kp M                   &kp B                   &kp COMMA               &kp UP                  &kp BSLH
-                /* 48..59 */ &kp LEFT_ALT            &mkp RCLK               &mo L_FN                &none                   &none                   &none                   &none                   &none                   &none                   &kp LEFT                &kp DOWN                &kp RIGHT
-                /* 60..66 */ &kp ESC                 &kp SPACE               &mkp LCLK               &kp ENTER               &kp BACKSPACE           &kp DELETE              &none
+&to L_BASE    &kp N1     &kp N2     &kp N3  &kp N4  &kp N5  &kp N6     &kp N7         &kp N8      &kp N9     &kp N0         &kp MINUS
+&kp TAB       &kp SLASH  &kp W      &kp E   &kp R   &kp T   &kp Y      &kp U          &kp I       &kp O      &kp SEMICOLON  &kp EQUAL
+&kp LCTRL     &kp A      &kp S      &kp D   &kp F   &kp G   &kp H      &kp J          &kp K       &kp L      &kp P          &kp PERIOD
+&kp LSHFT     &kp Z      &kp X      &kp C   &kp V   &kp Q   &kp N      &kp M          &kp B       &kp COMMA  &kp UP         &kp BSLH
+&kp LEFT_ALT  &mkp RCLK  &mo L_FN   &none   &none   &none   &none      &none          &none       &kp LEFT   &kp DOWN       &kp RIGHT
+&kp ESC       &kp SPACE  &mkp LCLK                          &kp ENTER  &kp BACKSPACE  &kp DELETE  &none
             >;
         };
 
         // Fn overlay above Game.
+
         FnMedia {
             display-name = "FnMedia";
             bindings = <
-                /* 00..11 */ &kp F11                    &kp F1                     &kp F2                     &kp F3                     &kp F4                     &kp F5                     &kp F6                     &kp F7                     &kp F8                     &kp F9                     &kp F10                    &kp F12
-                /* 12..23 */ &trans                     &kp GRAVE                  &kp PSCRN                  &kp SLCK          &kp C_PAUSE      &kp CAPSLOCK               &bt BT_SEL 0               &bt BT_SEL 1               &bt BT_SEL 2               &bt BT_SEL 3               &bt BT_SEL 4               &kp K_APP
-                /* 24..35 */ &trans                     &trans                     &trans                     &trans                     &trans                     &trans                     &kp C_PREV                 &kp C_PP                   &kp C_NEXT                 &kp C_VOL_DN               &kp C_VOL_UP               &kp C_MUTE
-                /* 36..47 */ &trans                     &kp LBKT                   &kp RBKT                   &mkp MCLK                  &msc SCRL_UP               &msc SCRL_DOWN             &out OUT_USB               &out OUT_BLE               &out OUT_TOG               &kp APOS                   &trans                     &to L_MOUSE
-                /* 48..59 */ &trans                     &trans                     &trans                     &none                      &none                      &none                      &none                      &none                      &none                      &trans                     &trans                     &trans
-                /* 60..66 */ &trans                     &trans                     &trans                     &trans                     &trans                     &trans                     &none
+&kp F11  &kp F1     &kp F2     &kp F3     &kp F4        &kp F5          &kp F6        &kp F7        &kp F8        &kp F9        &kp F10       &kp F12
+&trans   &kp GRAVE  &kp PSCRN  &kp SLCK   &kp C_PAUSE   &kp CAPSLOCK    &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4  &kp K_APP
+&trans   &trans     &trans     &trans     &trans        &trans          &kp C_PREV    &kp C_PP      &kp C_NEXT    &kp C_VOL_DN  &kp C_VOL_UP  &kp C_MUTE
+&trans   &kp LBKT   &kp RBKT   &mkp MCLK  &msc SCRL_UP  &msc SCRL_DOWN  &out OUT_USB  &out OUT_BLE  &out OUT_TOG  &kp APOS      &trans        &to L_MOUSE
+&trans   &trans     &trans     &none      &none         &none           &none         &none         &none         &trans        &trans        &trans
+&trans   &trans     &trans                                              &trans        &trans        &trans        &none
             >;
         };
-
     };
 };
