@@ -37,8 +37,16 @@ extern const struct zmk_split_transport_central *active_transport;
 extern const struct zmk_split_transport_peripheral *active_transport;
 #endif
 
-#define MODU_IS_LEFT_SHIELD  IS_ENABLED(CONFIG_SHIELD_MODU_LEFT)
-#define MODU_IS_RIGHT_SHIELD IS_ENABLED(CONFIG_SHIELD_MODU_RIGHT)
+/* The dongle adapter uses new shield names but the same physical LED wiring.
+ * Test the physical side, not the central/peripheral role: both dongle halves
+ * are peripherals. Keep the original standalone shield names supported.
+ */
+#define MODU_IS_LEFT_SHIELD \
+    (IS_ENABLED(CONFIG_SHIELD_MODU_LEFT) || \
+     IS_ENABLED(CONFIG_SHIELD_MODU_PERIPHERAL_LEFT))
+#define MODU_IS_RIGHT_SHIELD \
+    (IS_ENABLED(CONFIG_SHIELD_MODU_RIGHT) || \
+     IS_ENABLED(CONFIG_SHIELD_MODU_PERIPHERAL_RIGHT))
 
 /* LED PWM device nodes */
 static const struct pwm_dt_spec leds[] = {

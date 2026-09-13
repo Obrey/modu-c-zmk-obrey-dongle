@@ -48,3 +48,14 @@ I2C `pinctrl-names`를 명시했습니다. 나머지 OLED 배선/패널 값은 �
 * 커스텀 부트 동작은 동글에서만 컴파일되고, 실제 source를 통해 좌우에 전달합니다.
 
 펌웨어 전체 컴파일과 실제 트랙볼/화면/부트 전달 시험은 미실행입니다.
+
+
+<!-- MODU-LED-SHIELD-COMPAT-v1 -->
+## 정정: 동글 LED 호환 패치 적용 후
+
+위의 "원본 45개 파일 그대로" 설명은 이 패치 적용 전 상태입니다.
+현재는 `modu-module/src/led_breath/led_breath.c`의 좌우 판별 매크로 두 개에
+`SHIELD_MODU_PERIPHERAL_LEFT/RIGHT` 이름을 추가했습니다. 나머지 하드웨어
+44개 파일은 이 패치가 변경하지 않습니다. 변경 전후 SHA-256은
+`reference/hardware-normalized-sha256.json`의 `approved_local_patches`에,
+원인과 검증 범위는 `docs/LED_SHIELD_COMPAT.md`에 기록했습니다.

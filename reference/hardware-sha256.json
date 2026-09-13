@@ -18,7 +18,7 @@
   "modu-module/dts/bindings/kscan/modu,kscan-alt-thumb-remap.yaml": "d50d4845070877844ad20c90da1d31034f81ad6cb3f88ff9a646c21fd303ac5d",
   "modu-module/src/led_breath/Kconfig": "5ee45a9569b492371907d006b20a3aad223d3039734a98843ec8f20833a9bd27",
   "modu-module/src/led_breath/CMakeLists.txt": "bc3d849d9dcd8b9daa43f408f311c219113768b1ee23afd1502da2ec3d44d2b6",
-  "modu-module/src/led_breath/led_breath.c": "8161d6ff6437fac5bf9d6699b0d53e51c122e40322d64efacbef2c7a5d58ff6f",
+  "modu-module/src/led_breath/led_breath.c": "3b3215d541ae6cdcd653b57984bac0f22ebcc0affda900996bc554ec92fa6496",
   "modu-module/src/alt_thumb_kscan/Kconfig": "9248d2766be8c492ccdb10d95747bb5f48c027c4013472a0ec6de4365a3787e2",
   "modu-module/src/alt_thumb_kscan/alt_thumb_kscan.c": "6a1dc03b9ccb65968629633be363eceac0f220ee1b5eec0bf1234a6a570513a9",
   "modu-module/src/alt_thumb_kscan/CMakeLists.txt": "3b9b769b4d3060153d05fcd6dbbc3bd3b02e220163c6f5ac51803ea1b779926b",

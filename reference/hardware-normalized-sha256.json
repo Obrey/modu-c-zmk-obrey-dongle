@@ -80,8 +80,8 @@
       "lf_sha256": "bc3d849d9dcd8b9daa43f408f311c219113768b1ee23afd1502da2ec3d44d2b6"
     },
     "modu-module/src/led_breath/led_breath.c": {
-      "source_sha256": "8161d6ff6437fac5bf9d6699b0d53e51c122e40322d64efacbef2c7a5d58ff6f",
-      "lf_sha256": "8161d6ff6437fac5bf9d6699b0d53e51c122e40322d64efacbef2c7a5d58ff6f"
+      "source_sha256": "3b3215d541ae6cdcd653b57984bac0f22ebcc0affda900996bc554ec92fa6496",
+      "lf_sha256": "3b3215d541ae6cdcd653b57984bac0f22ebcc0affda900996bc554ec92fa6496"
     },
     "modu-module/src/alt_thumb_kscan/Kconfig": {
       "source_sha256": "9248d2766be8c492ccdb10d95747bb5f48c027c4013472a0ec6de4365a3787e2",
@@ -182,6 +182,15 @@
     "zmk-pmw3610-driver/dts/bindings/pixart,pmw3610-alt.yml": {
       "source_sha256": "60ad309968d7ea0881bdb3fe035368e15c856313210442413bd9f3c88f791e8c",
       "lf_sha256": "3cdf070aa09f6881aa4b67e2fc1f731464d2e2ea3f22408e29e5ac72559c6bb7"
+    }
+  },
+  "approved_local_patches": {
+    "modu-module/src/led_breath/led_breath.c": {
+      "schema_version": 1,
+      "file": "modu-module/src/led_breath/led_breath.c",
+      "original_lf_sha256": "8161d6ff6437fac5bf9d6699b0d53e51c122e40322d64efacbef2c7a5d58ff6f",
+      "patched_lf_sha256": "3b3215d541ae6cdcd653b57984bac0f22ebcc0affda900996bc554ec92fa6496",
+      "reason": "Recognize MODU_PERIPHERAL_LEFT/RIGHT shield names in LED side detection; no role or pin changes."
     }
   }
 }
