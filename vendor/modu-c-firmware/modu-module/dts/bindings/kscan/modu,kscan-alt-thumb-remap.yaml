@@ -1,0 +1,13 @@
+description: MODU boot-time alt thumb kscan remapper
+
+compatible: "modu,kscan-alt-thumb-remap"
+
+include: kscan.yaml
+
+properties:
+  kscan:
+    type: phandle
+    required: true
+  orientation-gpios:
+    type: phandle-array
+    required: true

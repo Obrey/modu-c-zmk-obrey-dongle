@@ -1,0 +1,9 @@
+# Copyright (c) 2026 EKS Inc.
+# Created by Ryu.
+# SPDX-License-Identifier: LicenseRef-EKS-NonCommercial-1.0
+
+config SHIELD_MODU_LEFT
+    def_bool $(shields_list_contains,modu_left)
+
+config SHIELD_MODU_RIGHT
+    def_bool $(shields_list_contains,modu_right)

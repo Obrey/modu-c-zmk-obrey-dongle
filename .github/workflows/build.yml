@@ -1,0 +1,114 @@
+name: Build MODU-C Dongle Firmware
+
+"on":
+  push:
+    paths:
+      - "config/**"
+      - "local-modules/**"
+      - "vendor/**"
+      - "tests/**"
+      - "scripts/**"
+      - "build.yaml"
+      - ".github/workflows/build.yml"
+      - "LICENSE"
+      - "NOTICE.md"
+      - "THIRD_PARTY_NOTICES.md"
+      - "LICENSES/**"
+  pull_request:
+    paths:
+      - "config/**"
+      - "local-modules/**"
+      - "vendor/**"
+      - "tests/**"
+      - "scripts/**"
+      - "build.yaml"
+      - ".github/workflows/build.yml"
+      - "LICENSE"
+      - "NOTICE.md"
+      - "THIRD_PARTY_NOTICES.md"
+      - "LICENSES/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: modu-c-zmk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate Keymap Editor and packaging files
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout user config
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Run static consistency checks
+        run: python3 scripts/validate.py
+
+      - name: Regression tests (configuration and synthetic packaging)
+        run: python3 -m unittest discover -s tests -p 'test_*.py'
+
+      - name: Host tests for direct boot dispatch (mocked transport)
+        run: python3 tests/run_host_tests.py
+
+  build:
+    name: Build left, right, dongle and reset images
+    needs: validate
+    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@641514a97db345f499dd50b0360e594270f008fe
+    with:
+      build_matrix_path: build.yaml
+      config_path: config
+      fallback_binary: hex
+      archive_name: modu-c-intermediate
+
+  package:
+    name: Package and verify flashable UF2 files
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout wrapper and license notices
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Download all five build outputs
+        uses: actions/download-artifact@v7
+        with:
+          name: modu-c-intermediate
+          path: intermediate
+
+      - name: Select, convert, and validate the five images
+        run: >-
+          python3 scripts/package_firmware.py
+          --intermediate intermediate
+          --converter vendor/modu-c-firmware/tools/uf2/uf2conv.py
+          --output uf2
+          --family 0xADA52840
+
+      - name: Verify final UF2 files again
+        run: python3 scripts/verify_uf2.py uf2/*.uf2
+
+      - name: Include license and attribution files
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp LICENSE NOTICE.md THIRD_PARTY_NOTICES.md uf2/
+          cp -R LICENSES uf2/LICENSES
+          cp docs/FLASH_KO.md uf2/FLASH_KO.md
+          cp vendor/modu-c-firmware/THIRD_PARTY_NOTICES.md uf2/MODU-UPSTREAM-NOTICES.md
+
+      - name: Upload flashable firmware with notices
+        uses: actions/upload-artifact@v7
+        with:
+          name: modu-c-dongle-firmware
+          path: uf2/
+          if-no-files-found: error
+

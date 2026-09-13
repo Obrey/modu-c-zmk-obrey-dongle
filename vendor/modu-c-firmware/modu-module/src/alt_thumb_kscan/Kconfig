@@ -1,0 +1,11 @@
+config MODU_ALT_THUMB_KSCAN
+    bool "MODU boot-time alt thumb kscan remap"
+    help
+      Remap the thumb cluster at the kscan stage when P0.08 is grounded at boot.
+
+config MODU_ALT_THUMB_KSCAN_INIT_PRIORITY
+    int "MODU alt thumb kscan init priority"
+    default 96
+    depends on MODU_ALT_THUMB_KSCAN
+    help
+      Must run after zmk,kscan-composite, which defaults to priority 95 here.

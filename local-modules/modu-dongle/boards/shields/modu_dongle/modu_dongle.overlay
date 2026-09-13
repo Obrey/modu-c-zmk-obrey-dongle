@@ -1,0 +1,29 @@
+/*
+ * Copyright (c) 2026 EKS Inc. Created by Ryu.
+ * SPDX-License-Identifier: LicenseRef-EKS-NonCommercial-1.0
+ * Unofficial Obrey dongle adaptation; see root NOTICE.md.
+ */
+
+#include "modu-layout.dtsi"
+#include "modu-inputs.dtsi"
+
+/ {
+    chosen {
+        zmk,kscan = &mock_kscan;
+        zmk,matrix-transform = &default_transform;
+        zephyr,display = &oled;
+    };
+    mock_kscan: mock_kscan_0 {
+        compatible = "zmk,kscan-mock";
+        columns = <0>;
+        rows = <0>;
+        events = <0>;
+    };
+};
+
+&modu_left_split { status = "okay"; };
+&modu_right_split { status = "okay"; };
+&modu_left_listener { status = "okay"; };
+&modu_right_listener { status = "okay"; };
+
+#include "oled-wiring.dtsi"

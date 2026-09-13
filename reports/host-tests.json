@@ -1,0 +1,16 @@
+{
+  "test_type": "host compilation of actual adapter with mocked ZMK/Zephyr/transport",
+  "firmware_build": false,
+  "physical_device_test": false,
+  "cases_per_configuration": 25,
+  "results": [
+    {
+      "metadata": 0,
+      "result": "PASS: 25 host adapter scenarios; metadata=0. ZMK/Zephyr and transport are mocked."
+    },
+    {
+      "metadata": 1,
+      "result": "PASS: 25 host adapter scenarios; metadata=1. ZMK/Zephyr and transport are mocked."
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+# Copyright (c) 2026 EKS Inc.
+# Created by Ryu.
+# SPDX-License-Identifier: LicenseRef-EKS-NonCommercial-1.0
+
+config BOARD_MS88SF3
+    select SOC_NRF52840_QIAA
+    imply RETAINED_MEM
+    imply RETENTION
+    imply RETENTION_BOOT_MODE

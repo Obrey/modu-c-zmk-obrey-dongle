@@ -1,0 +1,38 @@
+{
+  "scope": "MODU-C + existing nice!nano v2 dongle source integration",
+  "firmware_compiled": false,
+  "hardware_tested": false,
+  "reason_no_firmware_build": "External ZMK source could not be fetched; ARM SDK is not installed. Do not treat source/mock tests as firmware validation.",
+  "checks": [
+    {
+      "name": "source_configuration",
+      "result": "PASS",
+      "log": "reports/static-check.log"
+    },
+    {
+      "name": "python_regressions",
+      "result": "PASS",
+      "log": "reports/python-tests.log"
+    },
+    {
+      "name": "real_boot_C_with_mocked_ZMK_transport",
+      "result": "PASS",
+      "log": "reports/host-c-tests.log"
+    }
+  ],
+  "regular_layer_bindings_preserved": 335,
+  "yaml_files_parsed": 13,
+  "shell_blocks_syntax_checked": 6,
+  "CMake_guard_mock_configurations_tested": 8,
+  "python_tests": 33,
+  "host_C_mock_scenarios": "25 per metadata configuration, 2 configurations",
+  "vendor_files_preserved": 45,
+  "important_caveats": [
+    "Embedded C/Devicetree/Kconfig API compatibility must be verified by the actual pinned ZMK build.",
+    "Source observer ordering and remote boot dispatch need actual device testing.",
+    "OLED uses a standard ZMK screen, not the old Corne custom UI or Studio extensions.",
+    "Original sensor measurement settings are not repaired; battery 0% can remain.",
+    "Initial migration requires all three devices settings-reset and normal firmware images.",
+    "Keymap baseline is the last uploaded rebuild, not later unuploaded Keymap Editor edits."
+  ]
+}

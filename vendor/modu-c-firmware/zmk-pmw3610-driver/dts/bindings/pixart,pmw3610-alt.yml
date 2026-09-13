@@ -1,0 +1,63 @@
+description: |
+  Sensor driver for the pixart PMW3610 mouse sensor 
+
+compatible: "pixart,pmw3610-alt"
+
+include: spi-device.yaml
+
+properties:
+  irq-gpios:
+    type: phandle-array
+    required: true
+  cpi:
+    type: int
+    default: 600
+    description: "CPI value (Range: 200 - 3200, Step: 200)"
+  swap-xy:
+    type: boolean
+  invert-x:
+    type: boolean
+  invert-y:
+    type: boolean
+  rotation-cos-milli:
+    type: int
+    default: 1000
+    description: "Rotation matrix cosine value scaled by 1000. Default 1000 means no rotation."
+  rotation-sin-milli:
+    type: int
+    default: 0
+    description: "Rotation matrix sine value scaled by 1000. Default 0 means no rotation."
+  orientation-gpios:
+    type: phandle-array
+    description: "Optional boot-time orientation select pin. Active means use alternate rotation."
+  alt-rotation-cos-milli:
+    type: int
+    default: 1000
+    description: "Alternate rotation matrix cosine value scaled by 1000."
+  alt-rotation-sin-milli:
+    type: int
+    default: 0
+    description: "Alternate rotation matrix sine value scaled by 1000."
+  alt-swap-xy:
+    type: boolean
+    description: "Use XY swap when the orientation select pin is active."
+  alt-invert-x:
+    type: boolean
+    description: "Invert X when the orientation select pin is active."
+  alt-invert-y:
+    type: boolean
+    description: "Invert Y when the orientation select pin is active."
+
+  evt-type:
+    type: int
+    required: true
+  x-input-code:
+    type: int
+    required: true
+  y-input-code:
+    type: int
+    required: true
+  force-awake:
+    type: boolean
+  force-awake-4ms-mode:
+    type: boolean

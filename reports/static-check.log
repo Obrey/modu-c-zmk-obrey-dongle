@@ -1,0 +1,15 @@
+{
+  "result": "PASS",
+  "layer_count": 5,
+  "binding_count": 335,
+  "matching_transform_positions": 67,
+  "build_targets": 5,
+  "trackball_channels": [
+    0,
+    1
+  ],
+  "unmodified_vendor_files": 45,
+  "firmware_compiled": false,
+  "hardware_tested": false
+}
+

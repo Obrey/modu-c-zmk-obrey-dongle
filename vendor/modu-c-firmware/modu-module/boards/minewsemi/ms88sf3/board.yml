@@ -1,0 +1,6 @@
+board:
+  name: ms88sf3
+  full_name: Minewsemi MS88SF3
+  vendor: minewsemi
+  socs:
+    - name: nrf52840

@@ -1,0 +1,16 @@
+# SPDX-License-Identifier: MIT
+if(CONFIG_DT_HAS_ZMK_BEHAVIOR_OBREY_COMBO_BOOT_ENABLED)
+  if(NOT CONFIG_ZMK_SPLIT)
+    message(FATAL_ERROR "Obrey direct boot combos require a split ZMK configuration")
+  endif()
+  if(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
+    if(NOT CONFIG_ZMK_BEHAVIOR_OBREY_COMBO_BOOT)
+      message(FATAL_ERROR "Obrey combo boot nodes are present but their central driver is disabled")
+    endif()
+    message(STATUS "Obrey source-aware combo boot: compiling central event observer")
+    # Do not turn this into a zephyr_library: listener order matters here.
+    target_sources(app PRIVATE ${CMAKE_CURRENT_LIST_DIR}/src/behavior_combo_boot.c)
+  else()
+    message(STATUS "Obrey combo boot: peripheral uses the standard bootloader behavior")
+  endif()
+endif()

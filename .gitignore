@@ -1,0 +1,12 @@
+/.west/
+/zmk/
+/zephyr/
+/modules/
+/bootloader/
+/tools/
+/build/
+/intermediate/
+/uf2/
+__pycache__/
+*.pyc
+.DS_Store

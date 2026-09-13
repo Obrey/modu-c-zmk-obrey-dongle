@@ -1,0 +1,20 @@
+config MODU_LED_BREATH
+    bool "Modu LED breathing effect"
+    default y
+    depends on PWM
+    help
+      Enable breathing effect for status LEDs using PWM.
+
+config MODU_LED_BREATH_PERIOD_MS
+    int "Breathing cycle period in milliseconds"
+    default 3000
+    depends on MODU_LED_BREATH
+    help
+      Duration of one full breath cycle (fade in + fade out).
+
+config MODU_LED_BREATH_STEP_MS
+    int "Breathing update interval in milliseconds"
+    default 20
+    depends on MODU_LED_BREATH
+    help
+      How often the PWM duty cycle is updated during breathing.

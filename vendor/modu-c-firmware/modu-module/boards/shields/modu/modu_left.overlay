@@ -1,0 +1,50 @@
+/*
+ * Copyright (c) 2026 EKS Inc.
+ * Created by Ryu.
+ * SPDX-License-Identifier: LicenseRef-EKS-NonCommercial-1.0
+ *
+ * BLE wireless central. Owns both trackball listeners (local + peripheral proxy).
+ */
+
+#include "modu.dtsi"
+
+/ {
+    chosen {
+        zmk,kscan = &alt_thumb_kscan;
+    };
+};
+
+&alt_thumb_kscan {
+    status = "okay";
+};
+
+&kscan_matrix {
+    col-gpios
+        = <&gpio0 27 GPIO_ACTIVE_HIGH>
+        , <&gpio0 31 GPIO_ACTIVE_HIGH>
+        , <&gpio0 28 GPIO_ACTIVE_HIGH>
+        , <&gpio0 29 GPIO_ACTIVE_HIGH>
+        , <&gpio0  2 GPIO_ACTIVE_HIGH>
+        , <&gpio1 15 GPIO_ACTIVE_HIGH>
+        ;
+};
+
+&trackball {
+    invert-x;
+    orientation-gpios = <&gpio0 8 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+    alt-swap-xy;
+    alt-invert-x;
+    alt-invert-y;
+    alt-rotation-cos-milli = <707>;
+    alt-rotation-sin-milli = <707>;
+};
+
+/* Local (left-half) trackball -> host HID. */
+&trackball_listener {
+    status = "okay";
+};
+
+/* Peripheral (right-half) trackball proxied over BLE split -> host HID. */
+&peripheral_trackball_listener {
+    status = "okay";
+};

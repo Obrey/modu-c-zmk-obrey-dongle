@@ -1,0 +1,10 @@
+file_format: "1"
+id: modu
+name: Modu
+type: shield
+features:
+  - keys
+  - split
+siblings:
+  - modu_left
+  - modu_right

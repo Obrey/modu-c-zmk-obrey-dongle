@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: MIT
+description: Boot the actual source of a recognized three-key combo
+compatible: "zmk,behavior-obrey-combo-boot"
+include: zero_param.yaml
+properties:
+  bindings:
+    type: phandle-array
+    required: true
+    description: One parameterless standard bootloader binding
+  key-positions:
+    type: array
+    required: true
+    description: The same three physical positions as the invoking combo
+  window-ms:
+    type: int
+    default: 80
+    description: Maximum skew between the three physical presses

@@ -1,0 +1,12 @@
+/outputs/
+/.west/
+/build/
+**/build/
+*.hex
+*.uf2
+*.bin
+*.map
+*.log
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: MIT
+config ZMK_BEHAVIOR_OBREY_COMBO_BOOT
+    bool
+    default y
+    depends on DT_HAS_ZMK_BEHAVIOR_OBREY_COMBO_BOOT_ENABLED
+    depends on ZMK_SPLIT && ZMK_SPLIT_ROLE_CENTRAL
+    help
+      Restore the actual physical source when a direct three-key combo invokes
+      the standard source-specific bootloader behavior. No new transport.

@@ -1,0 +1,31 @@
+include:
+  - board: ms88sf3/nrf52840
+    shield: modu_peripheral_left
+    cmake-args: >-
+      "-DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}/vendor/modu-c-firmware/modu-module;${GITHUB_WORKSPACE}/vendor/modu-c-firmware/zmk-pmw3610-driver;${GITHUB_WORKSPACE}/local-modules/modu-dongle;${GITHUB_WORKSPACE}/local-modules/obrey-combo-boot" "-DKEYMAP_FILE=${GITHUB_WORKSPACE}/config/modu.keymap" -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
+    artifact-name: modu_left_dongle
+
+  - board: ms88sf3/nrf52840
+    shield: modu_peripheral_right
+    cmake-args: >-
+      "-DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}/vendor/modu-c-firmware/modu-module;${GITHUB_WORKSPACE}/vendor/modu-c-firmware/zmk-pmw3610-driver;${GITHUB_WORKSPACE}/local-modules/modu-dongle;${GITHUB_WORKSPACE}/local-modules/obrey-combo-boot" "-DKEYMAP_FILE=${GITHUB_WORKSPACE}/config/modu.keymap" -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
+    artifact-name: modu_right_dongle
+
+  - board: nice_nano@2.0.0//zmk
+    shield: modu_dongle
+    cmake-args: >-
+      "-DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}/vendor/modu-c-firmware/modu-module;${GITHUB_WORKSPACE}/vendor/modu-c-firmware/zmk-pmw3610-driver;${GITHUB_WORKSPACE}/local-modules/modu-dongle;${GITHUB_WORKSPACE}/local-modules/obrey-combo-boot" "-DKEYMAP_FILE=${GITHUB_WORKSPACE}/config/modu.keymap"
+    artifact-name: modu_dongle
+
+  - board: ms88sf3/nrf52840
+    shield: settings_reset
+    cmake-args: >-
+      "-DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}/vendor/modu-c-firmware/modu-module;${GITHUB_WORKSPACE}/vendor/modu-c-firmware/zmk-pmw3610-driver;${GITHUB_WORKSPACE}/local-modules/modu-dongle;${GITHUB_WORKSPACE}/local-modules/obrey-combo-boot"
+    artifact-name: modu_settings_reset
+
+  - board: nice_nano@2.0.0//zmk
+    shield: settings_reset
+    cmake-args: >-
+      "-DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}/vendor/modu-c-firmware/modu-module;${GITHUB_WORKSPACE}/vendor/modu-c-firmware/zmk-pmw3610-driver;${GITHUB_WORKSPACE}/local-modules/modu-dongle;${GITHUB_WORKSPACE}/local-modules/obrey-combo-boot"
+    artifact-name: dongle_settings_reset
+
