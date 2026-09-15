@@ -1,0 +1,24 @@
+HOST/STATIC VALIDATION ONLY — NOT AN ARM/ZMK BUILD
+Synthetic UF2 fixtures are temporary and are not delivered.
+OK: metadata matches the 67-position upstream default_transform.
+OK: every keymap layer has 67 bindings; default placeholders are at 51..56 only.
+OK: six build targets, pinned source revisions, overlay paths, and module paths are consistent.
+OK: deterministic HEX normalization, UF2 structural checks, and notices are wired in.
+OK: HEX normalization rejects corruption and removes terminal blank lines.
+OK: UF2 magic, family ID, block tables, ranges, and address limits are enforced.
+OK: native/HEX packaging rejects missing, duplicate, and identical half outputs.
+test_all_six_native_uf2_outputs (__main__.FullConfigTests.test_all_six_native_uf2_outputs) ... ok
+test_boot_gate_and_confirm_positions (__main__.FullConfigTests.test_boot_gate_and_confirm_positions) ... ok
+test_central_connections_and_no_studio_fork (__main__.FullConfigTests.test_central_connections_and_no_studio_fork) ... ok
+test_dongle_receives_both_trackballs (__main__.FullConfigTests.test_dongle_receives_both_trackballs) ... ok
+test_dongle_transform_matches_keyboard_metadata (__main__.FullConfigTests.test_dongle_transform_matches_keyboard_metadata) ... ok
+test_hold_settings (__main__.FullConfigTests.test_hold_settings) ... ok
+test_left_forwards_trackball_on_id1_only (__main__.FullConfigTests.test_left_forwards_trackball_on_id1_only) ... ok
+test_missing_dongle_output_is_rejected (__main__.FullConfigTests.test_missing_dongle_output_is_rejected) ... ok
+test_nine_layers_67_positions (__main__.FullConfigTests.test_nine_layers_67_positions) ... ok
+test_no_custom_boot_module_or_old_mouse_include (__main__.FullConfigTests.test_no_custom_boot_module_or_old_mouse_include) ... ok
+test_oled_keeps_original_chip_and_pins (__main__.FullConfigTests.test_oled_keeps_original_chip_and_pins) ... ok
+test_packaging_names_equal_matrix_names (__main__.FullConfigTests.test_packaging_names_equal_matrix_names) ... ok
+test_right_forwards_trackball_on_id0_only (__main__.FullConfigTests.test_right_forwards_trackball_on_id0_only) ... ok
+Ran 13 tests in 0.008s
+OK

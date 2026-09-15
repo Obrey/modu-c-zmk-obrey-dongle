@@ -1,0 +1,20 @@
+/* Applied AFTER the pinned upstream modu_left.overlay.
+ * Keep every original GPIO, orientation selector, and PMW3610 correction.
+ * Only change where pointing events are sent.
+ */
+&trackball_listener { status = "disabled"; };
+&peripheral_trackball_listener { status = "disabled"; };
+
+// A peripheral input-split must have a physical device. Disable unused ID 0.
+&trackball_split { status = "disabled"; };
+
+/ {
+    split_inputs {
+        trackball_split_left: trackball_split_left@1 {
+            compatible = "zmk,input-split";
+            reg = <1>;
+            status = "okay";
+            device = <&trackball>;
+        };
+    };
+};

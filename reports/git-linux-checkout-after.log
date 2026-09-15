@@ -1,4 +1,0 @@
-$ git -c core.autocrlf=false clone --no-hardlinks /mnt/data/_fixwork/git-ci-before /mnt/data/_fixwork/git-ci-after
-
-Cloning into '/mnt/data/_fixwork/git-ci-after'...
-done.

@@ -1,7 +1,6 @@
-# Unofficial MODU-C dongle adaptation, non-commercial; see LICENSE.
+# Unofficial MODU-C dongle adaptation; see LICENSE and NOTICE.md.
 config SHIELD_MODU_DONGLE
     def_bool $(shields_list_contains,modu_dongle)
-config SHIELD_MODU_PERIPHERAL_LEFT
-    def_bool $(shields_list_contains,modu_peripheral_left)
-config SHIELD_MODU_PERIPHERAL_RIGHT
-    def_bool $(shields_list_contains,modu_peripheral_right)
+
+config SHIELD_MODU_DONGLE_OLED
+    def_bool $(shields_list_contains,modu_dongle_oled)

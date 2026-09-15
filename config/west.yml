@@ -2,10 +2,19 @@ manifest:
   remotes:
     - name: zmkfirmware
       url-base: https://github.com/zmkfirmware
+    - name: modu-c-upstream
+      url-base: https://github.com/22sh22
+
   projects:
     - name: zmk
       remote: zmkfirmware
       revision: 641514a97db345f499dd50b0360e594270f008fe
       import: app/west.yml
+
+    - name: modu-c-firmware
+      remote: modu-c-upstream
+      revision: bee0bb4b812f63f279eb67e928accc89600b5904
+      path: modu-c-firmware
+
   self:
     path: config

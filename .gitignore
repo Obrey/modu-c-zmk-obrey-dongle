@@ -1,12 +1,17 @@
-/.west/
-/zmk/
-/zephyr/
-/modules/
-/bootloader/
-/tools/
-/build/
-/intermediate/
-/uf2/
+build/
+outputs/
+firmware/
+__pycache__/
+*.py[cod]
+*.hex
+*.uf2
+.DS_Store
+Thumbs.db
+
+# Local validation/build products
 __pycache__/
 *.pyc
-.DS_Store
+.west/
+modu-c-firmware/
+intermediate/
+uf2/

@@ -1,8 +1,0 @@
-# SPDX-License-Identifier: MIT
-# Nested module: do NOT move this file to the repository root.
-name: zmk-behavior-obrey-combo-boot
-build:
-  cmake: .
-  kconfig: Kconfig
-  settings:
-    dts_root: .

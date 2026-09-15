@@ -1,7 +1,4 @@
-name: obrey-modu-dongle
+name: modu-dongle
 build:
-  cmake: .
-  kconfig: Kconfig
   settings:
     board_root: .
-    dts_root: .

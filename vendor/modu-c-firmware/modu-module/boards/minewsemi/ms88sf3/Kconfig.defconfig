@@ -1,7 +1,0 @@
-# Copyright (c) 2026 EKS Inc.
-# Created by Ryu.
-# SPDX-License-Identifier: LicenseRef-EKS-NonCommercial-1.0
-
-if BOARD_MS88SF3
-
-endif # BOARD_MS88SF3

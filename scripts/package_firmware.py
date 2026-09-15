@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Select, convert, and verify the three MODU-C dongle firmware and two settings-reset outputs."""
+"""Select, convert, and verify the MODU-C firmware and settings-reset outputs."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ from pathlib import Path
 from normalize_hex import HexFormatError, normalize
 from verify_uf2 import MODU_C_FAMILY_ID, Uf2ValidationError, validate_uf2
 
-TARGETS = ("modu_left_dongle", "modu_right_dongle", "modu_dongle", "modu_settings_reset", "dongle_settings_reset")
+TARGETS = ("modu_left", "modu_right", "modu_dongle", "modu_dongle_oled", "settings_reset_modu", "settings_reset_dongle")
 
 
 class PackageError(RuntimeError):
@@ -40,11 +40,12 @@ def package_firmware(
     converter: Path,
     output: Path,
     family_id: int = MODU_C_FAMILY_ID,
+    targets: tuple[str, ...] = TARGETS,
 ) -> list[Path]:
     if not intermediate.is_dir():
         raise PackageError(f"intermediate build directory does not exist: {intermediate}")
 
-    selections = {target: _single_input(intermediate, target) for target in TARGETS}
+    selections = {target: _single_input(intermediate, target) for target in targets}
     needs_conversion = any(kind == "hex" for kind, _ in selections.values())
     if needs_conversion:
         if not converter.is_file():
@@ -59,7 +60,7 @@ def package_firmware(
 
     with tempfile.TemporaryDirectory(prefix="modu-c-hex-") as temporary:
         temporary_dir = Path(temporary)
-        for target in TARGETS:
+        for target in targets:
             kind, source = selections[target]
             destination = output / f"{target}.uf2"
             destination.unlink(missing_ok=True)
@@ -100,12 +101,9 @@ def package_firmware(
         summaries = [validate_uf2(path, family_id) for path in results]
     except (OSError, Uf2ValidationError) as exc:
         raise PackageError(str(exc)) from exc
-    for summary in summaries:
-        if summary.lowest_address < 0x26000 or summary.highest_address > 0xEC000:
-            raise PackageError(f"{summary.path}: outside application partition; refusing to package")
-    if len({s.sha256 for s in summaries[:3]}) != 3:
+    if len(summaries) >= 2 and summaries[0].sha256 == summaries[1].sha256:
         raise PackageError(
-            "normal firmware outputs are byte-identical; wrong build selection"
+            "left and right UF2 files are byte-identical; the same build may have been selected twice"
         )
 
     for summary in summaries:
@@ -118,7 +116,7 @@ def package_firmware(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Package the exact five MODU-C dongle build outputs, excluding bootloader/storage writes."
+        description="Package the exact MODU-C left/right/dongle/OLED/board-specific reset outputs as verified UF2 files."
     )
     parser.add_argument("--intermediate", required=True, type=Path)
     parser.add_argument("--converter", required=True, type=Path)

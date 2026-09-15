@@ -1,3 +1,0 @@
-$ python3 /mnt/data/modu-dongle-eol-tab-fix/apply_fix.py --repo /mnt/data/_fixwork/actual-driver-change --yes
-
-STOP: REAL hardware content difference, not only line endings: zmk-pmw3610-driver/Kconfig. Nothing was changed.

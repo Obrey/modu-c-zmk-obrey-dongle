@@ -1,2 +1,0 @@
-rsource "src/led_breath/Kconfig"
-rsource "src/alt_thumb_kscan/Kconfig"

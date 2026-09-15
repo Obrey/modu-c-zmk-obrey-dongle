@@ -1,114 +1,93 @@
-name: Build MODU-C Dongle Firmware
+name: Build MODU-C + Dongle
 
 "on":
   push:
     paths:
       - "config/**"
       - "local-modules/**"
-      - "vendor/**"
-      - "tests/**"
       - "scripts/**"
       - "build.yaml"
       - ".github/workflows/build.yml"
-      - "LICENSE"
+      - "LICENSE*"
+      - "LICENSES/**"
       - "NOTICE.md"
       - "THIRD_PARTY_NOTICES.md"
-      - "LICENSES/**"
   pull_request:
-    paths:
-      - "config/**"
-      - "local-modules/**"
-      - "vendor/**"
-      - "tests/**"
-      - "scripts/**"
-      - "build.yaml"
-      - ".github/workflows/build.yml"
-      - "LICENSE"
-      - "NOTICE.md"
-      - "THIRD_PARTY_NOTICES.md"
-      - "LICENSES/**"
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: modu-c-zmk-${{ github.ref }}
+  group: modu-c-dongle-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   validate:
-    name: Validate Keymap Editor and packaging files
+    name: Validate configuration and packaging
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Checkout user config
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-
-      - name: Run static consistency checks
+      - name: Check layout, build matrix, and source paths
         run: python3 scripts/validate.py
-
-      - name: Regression tests (configuration and synthetic packaging)
-        run: python3 -m unittest discover -s tests -p 'test_*.py'
-
-      - name: Host tests for direct boot dispatch (mocked transport)
-        run: python3 tests/run_host_tests.py
+      - name: Test HEX and UF2 safeguards
+        run: python3 scripts/selftest.py
+      - name: Test boot keys, dongle routing, and all output names
+        run: python3 scripts/test_full_config.py
 
   build:
-    name: Build left, right, dongle and reset images
+    name: Build keyboard halves, dongle variants, and reset firmware
     needs: validate
     uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@641514a97db345f499dd50b0360e594270f008fe
     with:
       build_matrix_path: build.yaml
       config_path: config
       fallback_binary: hex
-      archive_name: modu-c-intermediate
+      archive_name: modu-c-dongle-intermediate
 
   package:
-    name: Package and verify flashable UF2 files
+    name: Package board-specific UF2 files
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    permissions:
-      contents: read
     steps:
-      - name: Checkout wrapper and license notices
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-
-      - name: Download all five build outputs
-        uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v7
         with:
-          name: modu-c-intermediate
+          name: modu-c-dongle-intermediate
           path: intermediate
-
-      - name: Select, convert, and validate the five images
+      - name: Checkout original pinned UF2 converter
+        uses: actions/checkout@v7
+        with:
+          repository: 22sh22/modu-c-firmware
+          ref: bee0bb4b812f63f279eb67e928accc89600b5904
+          path: upstream
+          persist-credentials: false
+          sparse-checkout: |
+            tools/uf2
+      - name: Convert and structurally verify all six outputs
         run: >-
           python3 scripts/package_firmware.py
           --intermediate intermediate
-          --converter vendor/modu-c-firmware/tools/uf2/uf2conv.py
+          --converter upstream/tools/uf2/uf2conv.py
           --output uf2
           --family 0xADA52840
-
-      - name: Verify final UF2 files again
-        run: python3 scripts/verify_uf2.py uf2/*.uf2
-
-      - name: Include license and attribution files
+      - name: Recheck final files and copy instructions and licenses
         shell: bash
         run: |
           set -euo pipefail
+          python3 scripts/verify_uf2.py uf2/*.uf2
           cp LICENSE NOTICE.md THIRD_PARTY_NOTICES.md uf2/
           cp -R LICENSES uf2/LICENSES
-          cp docs/FLASH_KO.md uf2/FLASH_KO.md
-          cp vendor/modu-c-firmware/THIRD_PARTY_NOTICES.md uf2/MODU-UPSTREAM-NOTICES.md
-
-      - name: Upload flashable firmware with notices
-        uses: actions/upload-artifact@v7
+          cp docs/FLASHING_KO.md uf2/READ_BEFORE_FLASHING_KO.md
+          (cd uf2 && sha256sum *.uf2 > SHA256SUMS.txt)
+      - uses: actions/upload-artifact@v7
         with:
           name: modu-c-dongle-firmware
           path: uf2/
           if-no-files-found: error
-

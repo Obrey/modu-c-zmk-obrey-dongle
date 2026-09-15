@@ -1,31 +1,40 @@
+# MODU-C keyboard halves + reusable Corne dongle hardware.
+# nice_nano_v2 is the older name; this pinned ZMK uses the ZMK board variant.
+# OLED and headless are ALTERNATIVES for the same physical dongle.
 include:
   - board: ms88sf3/nrf52840
-    shield: modu_peripheral_left
+    shield: modu_left
     cmake-args: >-
-      "-DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}/vendor/modu-c-firmware/modu-module;${GITHUB_WORKSPACE}/vendor/modu-c-firmware/zmk-pmw3610-driver;${GITHUB_WORKSPACE}/local-modules/modu-dongle;${GITHUB_WORKSPACE}/local-modules/obrey-combo-boot" "-DKEYMAP_FILE=${GITHUB_WORKSPACE}/config/modu.keymap" -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
-    artifact-name: modu_left_dongle
+      "-DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}/modu-c-firmware/modu-module;${GITHUB_WORKSPACE}/modu-c-firmware/zmk-pmw3610-driver" "-DKEYMAP_FILE=${GITHUB_WORKSPACE}/config/modu.keymap" -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n -DCONFIG_ZMK_USB=n "-DEXTRA_DTC_OVERLAY_FILE=${GITHUB_WORKSPACE}/config/dongle/modu_left.overlay"
+    artifact-name: modu_left
 
   - board: ms88sf3/nrf52840
-    shield: modu_peripheral_right
+    shield: modu_right
     cmake-args: >-
-      "-DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}/vendor/modu-c-firmware/modu-module;${GITHUB_WORKSPACE}/vendor/modu-c-firmware/zmk-pmw3610-driver;${GITHUB_WORKSPACE}/local-modules/modu-dongle;${GITHUB_WORKSPACE}/local-modules/obrey-combo-boot" "-DKEYMAP_FILE=${GITHUB_WORKSPACE}/config/modu.keymap" -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
-    artifact-name: modu_right_dongle
+      "-DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}/modu-c-firmware/modu-module;${GITHUB_WORKSPACE}/modu-c-firmware/zmk-pmw3610-driver" "-DKEYMAP_FILE=${GITHUB_WORKSPACE}/config/modu.keymap" -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n -DCONFIG_ZMK_USB=n "-DEXTRA_DTC_OVERLAY_FILE=${GITHUB_WORKSPACE}/config/dongle/modu_right.overlay"
+    artifact-name: modu_right
 
-  - board: nice_nano@2.0.0//zmk
+  - board: nice_nano/nrf52840/zmk
     shield: modu_dongle
     cmake-args: >-
-      "-DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}/vendor/modu-c-firmware/modu-module;${GITHUB_WORKSPACE}/vendor/modu-c-firmware/zmk-pmw3610-driver;${GITHUB_WORKSPACE}/local-modules/modu-dongle;${GITHUB_WORKSPACE}/local-modules/obrey-combo-boot" "-DKEYMAP_FILE=${GITHUB_WORKSPACE}/config/modu.keymap"
+      "-DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}/local-modules/modu-dongle" "-DKEYMAP_FILE=${GITHUB_WORKSPACE}/config/modu.keymap"
     artifact-name: modu_dongle
+
+  - board: nice_nano/nrf52840/zmk
+    shield: modu_dongle_oled
+    cmake-args: >-
+      "-DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}/local-modules/modu-dongle" "-DKEYMAP_FILE=${GITHUB_WORKSPACE}/config/modu.keymap"
+    artifact-name: modu_dongle_oled
 
   - board: ms88sf3/nrf52840
     shield: settings_reset
     cmake-args: >-
-      "-DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}/vendor/modu-c-firmware/modu-module;${GITHUB_WORKSPACE}/vendor/modu-c-firmware/zmk-pmw3610-driver;${GITHUB_WORKSPACE}/local-modules/modu-dongle;${GITHUB_WORKSPACE}/local-modules/obrey-combo-boot"
-    artifact-name: modu_settings_reset
+      "-DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}/modu-c-firmware/modu-module" -DCONFIG_MODU_LED_BREATH=n -DCONFIG_MODU_ALT_THUMB_KSCAN=n
+    artifact-name: settings_reset_modu
 
-  - board: nice_nano@2.0.0//zmk
+  - board: nice_nano/nrf52840/zmk
     shield: settings_reset
     cmake-args: >-
-      "-DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}/vendor/modu-c-firmware/modu-module;${GITHUB_WORKSPACE}/vendor/modu-c-firmware/zmk-pmw3610-driver;${GITHUB_WORKSPACE}/local-modules/modu-dongle;${GITHUB_WORKSPACE}/local-modules/obrey-combo-boot"
-    artifact-name: dongle_settings_reset
+      "-DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}/local-modules/modu-dongle"
+    artifact-name: settings_reset_dongle
 

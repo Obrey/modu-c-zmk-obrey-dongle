@@ -1,0 +1,20 @@
+/* Applied AFTER the pinned upstream modu_right.overlay.
+ * Keep the original key transform col-offset and trackball orientation.
+ */
+&trackball_listener { status = "disabled"; };
+&peripheral_trackball_listener { status = "disabled"; };
+&trackball_split {
+    status = "okay";
+    device = <&trackball>;
+};
+
+/ {
+    split_inputs {
+        // Shared label for completeness; never register an unbound peripheral input.
+        trackball_split_left: trackball_split_left@1 {
+            compatible = "zmk,input-split";
+            reg = <1>;
+            status = "disabled";
+        };
+    };
+};
