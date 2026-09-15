@@ -94,3 +94,11 @@ Fetched through west; source assets and LICENSE remain with that upstream projec
 This archive does not redistribute its fonts or image assets. v4 builds the original
 layout/widgets with narrow generated-source compatibility adaptations. The local
 D/L/R battery widget retains v3's original peer-mapping logic.
+
+## v6 independent additions
+
+The new `battery_telemetry*.c/.h` adapters and their tests are MIT-licensed local
+additions using public Zephyr sensor/GATT APIs and the previously documented
+pinned ZMK split-source adapter. No MODU driver or hardware source was copied
+into these files. Original MODU source remains fetched at the same revision
+and under its original upstream license. The voltage-divider values are not changed.

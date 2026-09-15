@@ -2,6 +2,14 @@
 # Keep the ORIGINAL UI layout, modifiers, USB/BT status, cat and layer widgets.
 # No Apple logo or v3 dashboard. Only the battery widget is MODU-specific.
 # All generated compatibility files go into the build directory, not upstream.
+# v5: Do not silently reintroduce decorated widget containers via a config
+# override. The upstream custom screen already sets its background/fonts.
+foreach(_modu_theme MONO DEFAULT SIMPLE)
+  if(CONFIG_LV_USE_THEME_${_modu_theme})
+    message(FATAL_ERROR
+      "CONFIG_LV_USE_THEME_${_modu_theme} adds unwanted borders/padding to the original custom display. Set it to n.")
+  endif()
+endforeach()
 if(CONFIG_SHIELD_DONGLE_DISPLAY)
   message(FATAL_ERROR "Use modu_dongle_oled alone, not an additional dongle_display shield")
 endif()

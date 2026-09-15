@@ -5,13 +5,13 @@ include:
   - board: ms88sf3/nrf52840
     shield: modu_left
     cmake-args: >-
-      "-DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}/modu-c-firmware/modu-module;${GITHUB_WORKSPACE}/modu-c-firmware/zmk-pmw3610-driver;${GITHUB_WORKSPACE}/local-modules/modu-dongle" "-DKEYMAP_FILE=${GITHUB_WORKSPACE}/config/modu.keymap" -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n -DCONFIG_ZMK_USB=n -DCONFIG_MODU_LED_BREATH=n -DCONFIG_MODU_PERIPHERAL_STATUS_LED=y -DCONFIG_PWM=y -DCONFIG_ZMK_BATTERY_REPORTING=y -DCONFIG_BT_BAS=y "-DEXTRA_DTC_OVERLAY_FILE=${GITHUB_WORKSPACE}/config/dongle/modu_left.overlay"
+      "-DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}/modu-c-firmware/modu-module;${GITHUB_WORKSPACE}/modu-c-firmware/zmk-pmw3610-driver;${GITHUB_WORKSPACE}/local-modules/modu-dongle" "-DKEYMAP_FILE=${GITHUB_WORKSPACE}/config/modu.keymap" -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n -DCONFIG_ZMK_USB=n -DCONFIG_MODU_LED_BREATH=n -DCONFIG_MODU_PERIPHERAL_STATUS_LED=y -DCONFIG_PWM=y -DCONFIG_ZMK_BATTERY_REPORTING=y -DCONFIG_BT_BAS=y -DCONFIG_MODU_BATTERY_TELEMETRY_PERIPHERAL=y "-DEXTRA_DTC_OVERLAY_FILE=${GITHUB_WORKSPACE}/config/dongle/modu_left.overlay"
     artifact-name: modu_left
 
   - board: ms88sf3/nrf52840
     shield: modu_right
     cmake-args: >-
-      "-DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}/modu-c-firmware/modu-module;${GITHUB_WORKSPACE}/modu-c-firmware/zmk-pmw3610-driver;${GITHUB_WORKSPACE}/local-modules/modu-dongle" "-DKEYMAP_FILE=${GITHUB_WORKSPACE}/config/modu.keymap" -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n -DCONFIG_ZMK_USB=n -DCONFIG_MODU_LED_BREATH=n -DCONFIG_MODU_PERIPHERAL_STATUS_LED=y -DCONFIG_PWM=y -DCONFIG_ZMK_BATTERY_REPORTING=y -DCONFIG_BT_BAS=y "-DEXTRA_DTC_OVERLAY_FILE=${GITHUB_WORKSPACE}/config/dongle/modu_right.overlay"
+      "-DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}/modu-c-firmware/modu-module;${GITHUB_WORKSPACE}/modu-c-firmware/zmk-pmw3610-driver;${GITHUB_WORKSPACE}/local-modules/modu-dongle" "-DKEYMAP_FILE=${GITHUB_WORKSPACE}/config/modu.keymap" -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n -DCONFIG_ZMK_USB=n -DCONFIG_MODU_LED_BREATH=n -DCONFIG_MODU_PERIPHERAL_STATUS_LED=y -DCONFIG_PWM=y -DCONFIG_ZMK_BATTERY_REPORTING=y -DCONFIG_BT_BAS=y -DCONFIG_MODU_BATTERY_TELEMETRY_PERIPHERAL=y "-DEXTRA_DTC_OVERLAY_FILE=${GITHUB_WORKSPACE}/config/dongle/modu_right.overlay"
     artifact-name: modu_right
 
   - board: nice_nano/nrf52840/zmk

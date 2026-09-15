@@ -1,7 +1,9 @@
 # SPDX-License-Identifier: MIT
 # Standard Zephyr module library; also works while find_package(Zephyr) loads modules.
 if(NOT CONFIG_SHIELD_MODU_DONGLE AND NOT CONFIG_SHIELD_MODU_DONGLE_OLED
-   AND NOT CONFIG_MODU_PERIPHERAL_STATUS_LED)
+   AND NOT CONFIG_MODU_PERIPHERAL_STATUS_LED
+   AND NOT CONFIG_MODU_BATTERY_TELEMETRY_PERIPHERAL
+   AND NOT CONFIG_MODU_BATTERY_TELEMETRY_CENTRAL)
   return()
 endif()
 zephyr_library_named(modu_dongle_runtime)
@@ -28,4 +30,11 @@ if(CONFIG_MODU_DONGLE_STATUS_SCREEN)
     message(FATAL_ERROR "MODU-C OLED requires ZMK_DISPLAY_STATUS_SCREEN_CUSTOM")
   endif()
   include(${CMAKE_CURRENT_LIST_DIR}/original_display.cmake)
+endif()
+
+if(CONFIG_MODU_BATTERY_TELEMETRY_PERIPHERAL)
+  zephyr_library_sources(${CMAKE_CURRENT_LIST_DIR}/src/battery_telemetry_peripheral.c)
+endif()
+if(CONFIG_MODU_BATTERY_TELEMETRY_CENTRAL)
+  zephyr_library_sources(${CMAKE_CURRENT_LIST_DIR}/src/battery_telemetry_central.c)
 endif()

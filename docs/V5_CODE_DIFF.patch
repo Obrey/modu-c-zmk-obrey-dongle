@@ -1,0 +1,76 @@
+--- v4/local-modules/modu-dongle/boards/shields/modu_dongle/modu_dongle_oled.conf
++++ v5/local-modules/modu-dongle/boards/shields/modu_dongle/modu_dongle_oled.conf
+@@ -46,7 +46,12 @@
+ CONFIG_LV_Z_FULL_REFRESH=y
+ CONFIG_LV_Z_MEM_POOL_SIZE=32768
+ CONFIG_LV_DPI_DEF=148
+-CONFIG_LV_USE_THEME_MONO=y
++# Use the custom screen's own styles. Built-in widget themes add borders,
++# padding and scrollbars to upstream output/modifier containers. These flags
++# do NOT control monochrome pixels: keep LV_COLOR_DEPTH_1 and buffers above.
++CONFIG_LV_USE_THEME_MONO=n
++CONFIG_LV_USE_THEME_DEFAULT=n
++CONFIG_LV_USE_THEME_SIMPLE=n
+ CONFIG_LV_FONT_UNSCII_8=y
+ CONFIG_LV_FONT_DEFAULT_UNSCII_8=y
+ CONFIG_ZMK_LV_FONT_DEFAULT_SMALL_UNSCII_8=y
+--- v4/local-modules/modu-dongle/original_display.cmake
++++ v5/local-modules/modu-dongle/original_display.cmake
+@@ -2,6 +2,14 @@
+ # Keep the ORIGINAL UI layout, modifiers, USB/BT status, cat and layer widgets.
+ # No Apple logo or v3 dashboard. Only the battery widget is MODU-specific.
+ # All generated compatibility files go into the build directory, not upstream.
++# v5: Do not silently reintroduce decorated widget containers via a config
++# override. The upstream custom screen already sets its background/fonts.
++foreach(_modu_theme MONO DEFAULT SIMPLE)
++  if(CONFIG_LV_USE_THEME_${_modu_theme})
++    message(FATAL_ERROR
++      "CONFIG_LV_USE_THEME_${_modu_theme} adds unwanted borders/padding to the original custom display. Set it to n.")
++  endif()
++endforeach()
+ if(CONFIG_SHIELD_DONGLE_DISPLAY)
+   message(FATAL_ERROR "Use modu_dongle_oled alone, not an additional dongle_display shield")
+ endif()
+--- v4/scripts/test_status.py
++++ v5/scripts/test_status.py
+@@ -57,6 +57,17 @@
+             self.assertIn('CONFIG_'+key, text)
+         self.assertNotIn('CONFIG_ZMK_DISPLAY_STATUS_SCREEN_BUILT_IN=y', text)
+ 
++    def test_no_builtin_theme_on_original_custom_screen(self):
++        # A 1-bit framebuffer does not require the LVGL mono WIDGET THEME.
++        # That theme adds borders and padding to the original icon containers.
++        text = (SHIELD/'modu_dongle_oled.conf').read_text()
++        for theme in ['MONO', 'DEFAULT', 'SIMPLE']:
++            key = f'CONFIG_LV_USE_THEME_{theme}'
++            self.assertRegex(text, rf'(?m)^{key}=n$')
++            self.assertNotRegex(text, rf'(?m)^{key}=y$')
++        self.assertIn('CONFIG_LV_COLOR_DEPTH_1=y', text)
++        self.assertIn('CONFIG_LV_Z_FULL_REFRESH=y', text)
++
+     def test_both_halves_use_actual_split_led(self):
+         entries = _parse_build_entries((ROOT/'build.yaml').read_text())
+         for e in entries[:2]:
+@@ -131,7 +142,7 @@
+         cfg = (SHIELD/'modu_dongle_oled.conf').read_text()
+         for line in ['CONFIG_ZMK_DONGLE_DISPLAY_MAC_MODIFIERS=y',
+                      'CONFIG_ZMK_DONGLE_DISPLAY_DONGLE_BATTERY=y',
+-                     'CONFIG_LV_USE_THEME_MONO=y', 'CONFIG_LV_Z_FULL_REFRESH=y']:
++                     'CONFIG_LV_USE_THEME_MONO=n', 'CONFIG_LV_Z_FULL_REFRESH=y']:
+             self.assertIn(line, cfg)
+         cm = (MODULE/'original_display.cmake').read_text()
+         for file in ['custom_status_screen.c', 'modifiers.c', 'modifiers_sym.c',
+@@ -178,6 +189,13 @@
+             self.assertNotIn('REPORTING_REPORTING', text)
+             self.assertEqual(text.count('CONFIG_ZMK_BATTERY_REPORTING'), 2)
+             self.assertIn('ev ? ev->indicators : 0', (generated/'hid_indicators.c').read_text())
++            # CMake must reject any enabled built-in theme, even if a user
++            # config or command-line override re-enables it after our .conf.
++            for theme in ['MONO', 'DEFAULT', 'SIMPLE']:
++                proc = subprocess.run([cmake, f'-DCONFIG_LV_USE_THEME_{theme}=y',
++                                       '-P', str(script)], capture_output=True, text=True)
++                self.assertNotEqual(proc.returncode, 0)
++                self.assertIn('adds unwanted borders/padding', proc.stderr)
+             (dd/'widgets/modifiers_sym.c').write_text('LV_IMG_CF_INDEXED_1BIT')
+             proc = subprocess.run([cmake, '-P', str(script)], capture_output=True, text=True)
+             self.assertNotEqual(proc.returncode, 0)

@@ -112,3 +112,7 @@ static inline void lv_label_set_text(lv_obj_t *p,const char *t) { snprintf(p->te
 static inline lv_timer_t *lv_timer_create(void (*f)(lv_timer_t *),uint32_t ms,void *data) { (void)f;(void)ms;(void)data; static lv_timer_t timer; return &timer; }
 
 static inline void lv_obj_set_style_text_letter_space(lv_obj_t *p,int c,int s) { (void)p;(void)c;(void)s; }
+
+#ifndef CONFIG_MODU_BATTERY_TELEMETRY_CENTRAL
+#define CONFIG_MODU_BATTERY_TELEMETRY_CENTRAL 0
+#endif

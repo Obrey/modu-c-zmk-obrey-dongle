@@ -1,32 +1,27 @@
-HOST TEST RESULTS ONLY — not an ARM firmware, LVGL render or physical OLED test.
+V6 HOST TEST LOG. Synthetic UF2 mentions below are NOT flashable firmware.
 
-== HOST TEST: validate.py ==
 OK: metadata matches the 67-position upstream default_transform.
 OK: every keymap layer has 67 bindings; default placeholders are at 51..56 only.
 OK: six build targets, pinned ZMK/MODU revisions, overlay paths, and module paths are consistent.
 OK: deterministic HEX normalization, UF2 structural checks, and notices are wired in.
-
-== HOST TEST: selftest.py ==
-Selected native UF2 for modu_left: /tmp/modu-c-selftest-vb1kf871/packaging/native-inputs/a/modu_left.uf2
-Selected native UF2 for modu_right: /tmp/modu-c-selftest-vb1kf871/packaging/native-inputs/b/modu_right.uf2
-Selected native UF2 for settings_reset: /tmp/modu-c-selftest-vb1kf871/packaging/native-inputs/c/settings_reset.uf2
+Selected native UF2 for modu_left: /tmp/modu-c-selftest-qnsfe1ha/packaging/native-inputs/a/modu_left.uf2
+Selected native UF2 for modu_right: /tmp/modu-c-selftest-qnsfe1ha/packaging/native-inputs/b/modu_right.uf2
+Selected native UF2 for settings_reset: /tmp/modu-c-selftest-qnsfe1ha/packaging/native-inputs/c/settings_reset.uf2
 Verified modu_left.uf2: 2 blocks, sha256=2c767369a752388442ad648d4f36e28dcb9efcd24706e77fdf0ad05753258886
 Verified modu_right.uf2: 2 blocks, sha256=d6e6bd2119a3a18035d1519a641b8b9547439fd12d827abf24997ea6a8c24cea
 Verified settings_reset.uf2: 2 blocks, sha256=77d6db42e793258abf353e617bc3efe0b2a9c3368baba5d55e76b7ce2917addc
-Converting validated HEX for modu_left: /tmp/modu-c-selftest-vb1kf871/packaging/hex-inputs/modu_left.hex
-Converting validated HEX for modu_right: /tmp/modu-c-selftest-vb1kf871/packaging/hex-inputs/modu_right.hex
-Converting validated HEX for settings_reset: /tmp/modu-c-selftest-vb1kf871/packaging/hex-inputs/settings_reset.hex
+Converting validated HEX for modu_left: /tmp/modu-c-selftest-qnsfe1ha/packaging/hex-inputs/modu_left.hex
+Converting validated HEX for modu_right: /tmp/modu-c-selftest-qnsfe1ha/packaging/hex-inputs/modu_right.hex
+Converting validated HEX for settings_reset: /tmp/modu-c-selftest-qnsfe1ha/packaging/hex-inputs/settings_reset.hex
 Verified modu_left.uf2: 2 blocks, sha256=0c096f4a00674b93864cc3fac9f91d1e6d4f1fc4e4b14e2dbf8a2fdb555236a2
 Verified modu_right.uf2: 2 blocks, sha256=1be298feec57cf234955db62d7aa21934ffd9241f84e00b5d913bf03656567d9
 Verified settings_reset.uf2: 2 blocks, sha256=fb8683206277eabb0a4b31fecb2174dc087424754bba1b2cde303a6b146ca309
-Selected native UF2 for modu_left: /tmp/modu-c-selftest-vb1kf871/packaging/identical/modu_left.uf2
-Selected native UF2 for modu_right: /tmp/modu-c-selftest-vb1kf871/packaging/identical/modu_right.uf2
-Selected native UF2 for settings_reset: /tmp/modu-c-selftest-vb1kf871/packaging/identical/settings_reset.uf2
+Selected native UF2 for modu_left: /tmp/modu-c-selftest-qnsfe1ha/packaging/identical/modu_left.uf2
+Selected native UF2 for modu_right: /tmp/modu-c-selftest-qnsfe1ha/packaging/identical/modu_right.uf2
+Selected native UF2 for settings_reset: /tmp/modu-c-selftest-qnsfe1ha/packaging/identical/settings_reset.uf2
 OK: HEX normalization rejects corruption and removes terminal blank lines.
 OK: UF2 magic, family ID, block tables, ranges, and address limits are enforced.
 OK: native/HEX packaging rejects missing, duplicate, and identical half outputs.
-
-== HOST TEST: test_full_config.py ==
 test_all_six_native_uf2_outputs (__main__.FullConfigTests.test_all_six_native_uf2_outputs) ... ok
 test_boot_gate_and_confirm_positions (__main__.FullConfigTests.test_boot_gate_and_confirm_positions) ... ok
 test_central_connections_and_no_studio_fork (__main__.FullConfigTests.test_central_connections_and_no_studio_fork) ... ok
@@ -43,23 +38,21 @@ test_packaging_names_equal_matrix_names (__main__.FullConfigTests.test_packaging
 test_right_forwards_trackball_on_id0_only (__main__.FullConfigTests.test_right_forwards_trackball_on_id0_only) ... ok
 
 ----------------------------------------------------------------------
-Ran 14 tests in 0.011s
+Ran 14 tests in 0.019s
 
 OK
-Selected native UF2 for modu_left: /tmp/tmpnt2a1q_o/inputs/modu_left.uf2
-Selected native UF2 for modu_right: /tmp/tmpnt2a1q_o/inputs/modu_right.uf2
-Selected native UF2 for modu_dongle: /tmp/tmpnt2a1q_o/inputs/modu_dongle.uf2
-Selected native UF2 for modu_dongle_oled: /tmp/tmpnt2a1q_o/inputs/modu_dongle_oled.uf2
-Selected native UF2 for settings_reset_modu: /tmp/tmpnt2a1q_o/inputs/settings_reset_modu.uf2
-Selected native UF2 for settings_reset_dongle: /tmp/tmpnt2a1q_o/inputs/settings_reset_dongle.uf2
+Selected native UF2 for modu_left: /tmp/tmpb0afo3tr/inputs/modu_left.uf2
+Selected native UF2 for modu_right: /tmp/tmpb0afo3tr/inputs/modu_right.uf2
+Selected native UF2 for modu_dongle: /tmp/tmpb0afo3tr/inputs/modu_dongle.uf2
+Selected native UF2 for modu_dongle_oled: /tmp/tmpb0afo3tr/inputs/modu_dongle_oled.uf2
+Selected native UF2 for settings_reset_modu: /tmp/tmpb0afo3tr/inputs/settings_reset_modu.uf2
+Selected native UF2 for settings_reset_dongle: /tmp/tmpb0afo3tr/inputs/settings_reset_dongle.uf2
 Verified modu_left.uf2: 2 blocks, sha256=2c767369a752388442ad648d4f36e28dcb9efcd24706e77fdf0ad05753258886
 Verified modu_right.uf2: 2 blocks, sha256=22d4ad65ed3d80b8d7a074dd3478064af5678e4d17a010c793721cd6dd832dd8
 Verified modu_dongle.uf2: 2 blocks, sha256=9112557d95ffc472b8117cb8bb37da9a7efc7c82a44e701ec31f2cc76f5cb42a
 Verified modu_dongle_oled.uf2: 2 blocks, sha256=472ebf3e2c017f71491ecc40877fe02b771623b3d56274c5108ebb759cff1c43
 Verified settings_reset_modu.uf2: 2 blocks, sha256=81e0425f1b4e794948b2e5ca7839c460d6b5a74df4dd88ddc0d4403f33e75d7f
 Verified settings_reset_dongle.uf2: 2 blocks, sha256=dcb49049308c8cd6d852180e4e429ca4303d07e1935a5f2fe15af29a6a04bac9
-
-== HOST TEST: test_status.py ==
 test_both_halves_use_actual_split_led (__main__.StatusTests.test_both_halves_use_actual_split_led) ... ok
 test_correct_pinned_api_signatures (__main__.StatusTests.test_correct_pinned_api_signatures) ... ok
 test_custom_keymap_provenance_and_fallback (__main__.StatusTests.test_custom_keymap_provenance_and_fallback) ... ok
@@ -69,6 +62,7 @@ Battery widget simulation passed (NOT an ARM/LVGL/Zephyr build or OLED rendering
 ok
 test_native_status_helpers (__main__.StatusTests.test_native_status_helpers) ... Native status helpers passed: L/R identity, battery validity/format, LED state
 ok
+test_no_builtin_theme_on_original_custom_screen (__main__.StatusTests.test_no_builtin_theme_on_original_custom_screen) ... ok
 test_no_lvgl_in_event_or_bluetooth_callbacks (__main__.StatusTests.test_no_lvgl_in_event_or_bluetooth_callbacks) ... ok
 test_oled_custom_mono_config (__main__.StatusTests.test_oled_custom_mono_config) ... ok
 test_original_display_cmake_adapter (__main__.StatusTests.test_original_display_cmake_adapter) ... ok
@@ -76,6 +70,18 @@ test_persistent_peer_id_not_slot_equals_side (__main__.StatusTests.test_persiste
 test_restore_original_module_and_requested_options (__main__.StatusTests.test_restore_original_module_and_requested_options) ... ok
 
 ----------------------------------------------------------------------
-Ran 11 tests in 0.197s
+Ran 12 tests in 1.102s
+
+OK
+test_all_three_active_firmwares_enable_feature (__main__.BatteryTelemetryTests.test_all_three_active_firmwares_enable_feature) ... ok
+test_native_adapters_and_ui (__main__.BatteryTelemetryTests.test_native_adapters_and_ui) ... PASS: packet validation, error/zero distinction, voltage and 56px label bounds
+PASS: peripheral sample/error/voltage/age logic (mock sensor and BLE)
+PASS: central filtering/read lifetime/cache/age/disconnect logic (mock BLE)
+PASS: v6 UI side identification and real-zero/error/stale/disconnected distinctions (mock labels)
+ok
+test_sensor_config_not_guessed_and_existing_paths_not_replaced (__main__.BatteryTelemetryTests.test_sensor_config_not_guessed_and_existing_paths_not_replaced) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.996s
 
 OK

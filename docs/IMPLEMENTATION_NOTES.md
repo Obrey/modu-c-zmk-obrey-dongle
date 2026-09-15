@@ -1,4 +1,4 @@
-# Implementation notes — v4
+# Implementation notes — v5 (v4 integration retained)
 
 ## Preserve the working input configuration
 
@@ -55,7 +55,11 @@ MODU_DONGLE_HAS_BATTERY=n displays D USB or D EXT instead of a percentage.
 
 v3 explicitly disabled the mono theme and rendered its own opposite-polarity
 screen/marks. v4 returns to the original screen's white logical background,
-black content and mono theme, preserving the supplied panel inversion setting.
+black content, preserving the supplied panel inversion setting.
+CORRECTION in v5: v4 also enabled the LVGL mono WIDGET THEME. That theme adds
+borders and 4-pixel padding to generic icon containers, changing the original
+layout. v5 disables all three built-in themes. The original custom screen
+still sets its own background/text styles; 1-bit pixel/buffer settings stay enabled.
 The SH1106 hardware configuration is otherwise retained at 128x64 logical pixels.
 VDB=100 + FULL_REFRESH uses an entire page-aligned frame; the pinned Zephyr
 allocates 1024 pixel bytes plus the 8-byte monochrome palette. A separate
@@ -76,3 +80,12 @@ upstream widget compilation, or physical hardware.
 - https://raw.githubusercontent.com/zmkfirmware/zmk/641514a97db345f499dd50b0360e594270f008fe/app/Kconfig
 - https://raw.githubusercontent.com/zmkfirmware/zmk/641514a97db345f499dd50b0360e594270f008fe/app/src/display/main.c
 - https://raw.githubusercontent.com/zmkfirmware/zephyr/v4.1.0%2Bzmk-fixes/modules/lvgl/Kconfig.memory
+
+## v5 theme correction sources
+
+- https://raw.githubusercontent.com/zmkfirmware/lvgl/f1db87ee98f1810328a8419572fa42a3b5f352ae/src/themes/mono/lv_theme_mono.c
+- https://raw.githubusercontent.com/zmkfirmware/lvgl/f1db87ee98f1810328a8419572fa42a3b5f352ae/Kconfig
+- https://raw.githubusercontent.com/zmkfirmware/zmk/641514a97db345f499dd50b0360e594270f008fe/app/src/display/main.c
+
+The local battery implementation is byte-identical to v4. See V5_BATTERY_FINDINGS_KO.md
+for the distinction between missing data and a received zero, and what remains unknown.

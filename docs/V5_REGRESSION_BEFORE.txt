@@ -1,0 +1,16 @@
+New border regression against unmodified v4 OLED config: EXPECTED FAILURE
+test_no_builtin_theme_on_original_custom_screen (__main__.StatusTests.test_no_builtin_theme_on_original_custom_screen) ... FAIL
+
+======================================================================
+FAIL: test_no_builtin_theme_on_original_custom_screen (__main__.StatusTests.test_no_builtin_theme_on_original_custom_screen)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/modu-c-dongle-v5-theme-fix/scripts/test_status.py", line 66, in test_no_builtin_theme_on_original_custom_screen
+    self.assertRegex(text, rf'(?m)^{key}=n$')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Regex didn't match: '(?m)^CONFIG_LV_USE_THEME_MONO=n$' not found in '# Official ZMK split central; five host BT profiles plus two halves.\nCONFIG_ZMK_BLE=y\nCONFIG_ZMK_USB=y\nCONFIG_ZMK_SPLIT=y\nCONFIG_ZMK_SPLIT_ROLE_CENTRAL=y\nCONFIG_ZMK_SPLIT_BLE_CENTRAL_PERIPHERALS=2\nCONFIG_BT_MAX_CONN=7\nCONFIG_BT_MAX_PAIRED=7\nCONFIG_ZMK_POINTING=y\nCONFIG_INPUT=y\nCONFIG_ZMK_SLEEP=n\n# Pinned ZMK gates BOTH battery event implementations on this option.\n# Keep enabled while peripheral battery fetching is enabled.\nCONFIG_ZMK_BATTERY_REPORTING=y\nCONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING=y\nCONFIG_ZMK_SPLIT_BLE_CENTRAL_SPLIT_RUN_STACK_SIZE=1024\nCONFIG_ZMK_BLE_CLEAR_BONDS_ON_START=n\nCONFIG_I2C=y\nCONFIG_PINCTRL=y\nCONFIG_ZMK_DISPLAY=y\nCONFIG_SSD1306=y\nCONFIG_ZMK_DISPLAY_BLANK_ON_IDLE=y\n\n# Identify this actual firmware separately from older/default builds.\nCONFIG_ZMK_KEYBOARD_NAME="MODU-C Mac v3"\nCONFIG_ZMK_STUDIO=n\nCONFIG_ZMK_KEYMAP_SETTINGS_STORAGE=n\n\n# Restore the original UI and its monochrome theme, not the v3 custom screen.\nCONFIG_ZMK_DISPLAY_STATUS_SCREEN_CUSTOM=y\nCONFIG_MODU_DONGLE_STATUS_SCREEN=y\nCONFIG_ZMK_DONGLE_DISPLAY_MAC_MODIFIERS=y\nCONFIG_ZMK_DONGLE_DISPLAY_DONGLE_BATTERY=y\nCONFIG_MODU_DONGLE_HAS_BATTERY=y\nCONFIG_ZMK_DONGLE_DISPLAY_MODIFIERS=y\nCONFIG_ZMK_DONGLE_DISPLAY_LAYER=y\nCONFIG_ZMK_DONGLE_DISPLAY_BONGO_CAT=y\nCONFIG_ZMK_HID_INDICATORS=y\n\n# Full, page-aligned 128x64 monochrome buffer, including LVGL\'s palette bytes.\nCONFIG_LV_COLOR_DEPTH_1=y\nCONFIG_LV_Z_BITS_PER_PIXEL=1\nCONFIG_LV_Z_VDB_SIZE=100\nCONFIG_LV_Z_BUFFER_ALLOC_STATIC=y\nCONFIG_LV_Z_MONOCHROME_CONVERSION_BUFFER=y\nCONFIG_LV_Z_FULL_REFRESH=y\nCONFIG_LV_Z_MEM_POOL_SIZE=32768\nCONFIG_LV_DPI_DEF=148\nCONFIG_LV_USE_THEME_MONO=y\nCONFIG_LV_FONT_UNSCII_8=y\nCONFIG_LV_FONT_DEFAULT_UNSCII_8=y\nCONFIG_ZMK_LV_FONT_DEFAULT_SMALL_UNSCII_8=y\nCONFIG_LV_USE_LABEL=y\n\n# Keep OLED rendering/I2C out of the keyboard and Bluetooth work queue.\nCONFIG_ZMK_DISPLAY_WORK_QUEUE_DEDICATED=y\nCONFIG_ZMK_DISPLAY_DEDICATED_THREAD_STACK_SIZE=4096\nCONFIG_ZMK_DISPLAY_TICK_PERIOD_MS=50\n'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (failures=1)

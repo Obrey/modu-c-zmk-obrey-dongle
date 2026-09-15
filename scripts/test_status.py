@@ -57,6 +57,17 @@ class StatusTests(unittest.TestCase):
             self.assertIn('CONFIG_'+key, text)
         self.assertNotIn('CONFIG_ZMK_DISPLAY_STATUS_SCREEN_BUILT_IN=y', text)
 
+    def test_no_builtin_theme_on_original_custom_screen(self):
+        # A 1-bit framebuffer does not require the LVGL mono WIDGET THEME.
+        # That theme adds borders and padding to the original icon containers.
+        text = (SHIELD/'modu_dongle_oled.conf').read_text()
+        for theme in ['MONO', 'DEFAULT', 'SIMPLE']:
+            key = f'CONFIG_LV_USE_THEME_{theme}'
+            self.assertRegex(text, rf'(?m)^{key}=n$')
+            self.assertNotRegex(text, rf'(?m)^{key}=y$')
+        self.assertIn('CONFIG_LV_COLOR_DEPTH_1=y', text)
+        self.assertIn('CONFIG_LV_Z_FULL_REFRESH=y', text)
+
     def test_both_halves_use_actual_split_led(self):
         entries = _parse_build_entries((ROOT/'build.yaml').read_text())
         for e in entries[:2]:
@@ -131,7 +142,7 @@ class StatusTests(unittest.TestCase):
         cfg = (SHIELD/'modu_dongle_oled.conf').read_text()
         for line in ['CONFIG_ZMK_DONGLE_DISPLAY_MAC_MODIFIERS=y',
                      'CONFIG_ZMK_DONGLE_DISPLAY_DONGLE_BATTERY=y',
-                     'CONFIG_LV_USE_THEME_MONO=y', 'CONFIG_LV_Z_FULL_REFRESH=y']:
+                     'CONFIG_LV_USE_THEME_MONO=n', 'CONFIG_LV_Z_FULL_REFRESH=y']:
             self.assertIn(line, cfg)
         cm = (MODULE/'original_display.cmake').read_text()
         for file in ['custom_status_screen.c', 'modifiers.c', 'modifiers_sym.c',
@@ -178,6 +189,13 @@ include("{MODULE/'original_display.cmake'}")
             self.assertNotIn('REPORTING_REPORTING', text)
             self.assertEqual(text.count('CONFIG_ZMK_BATTERY_REPORTING'), 2)
             self.assertIn('ev ? ev->indicators : 0', (generated/'hid_indicators.c').read_text())
+            # CMake must reject any enabled built-in theme, even if a user
+            # config or command-line override re-enables it after our .conf.
+            for theme in ['MONO', 'DEFAULT', 'SIMPLE']:
+                proc = subprocess.run([cmake, f'-DCONFIG_LV_USE_THEME_{theme}=y',
+                                       '-P', str(script)], capture_output=True, text=True)
+                self.assertNotEqual(proc.returncode, 0)
+                self.assertIn('adds unwanted borders/padding', proc.stderr)
             (dd/'widgets/modifiers_sym.c').write_text('LV_IMG_CF_INDEXED_1BIT')
             proc = subprocess.run([cmake, '-P', str(script)], capture_output=True, text=True)
             self.assertNotEqual(proc.returncode, 0)

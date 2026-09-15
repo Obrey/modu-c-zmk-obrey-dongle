@@ -17,6 +17,7 @@
 #include <zmk/usb.h>
 #include "battery_status.h"
 #include "status_logic.h"
+#include "battery_telemetry.h"
 
 LOG_MODULE_REGISTER(modu_status, CONFIG_LOG_DEFAULT_LEVEL);
 #define SOURCE_COUNT CONFIG_ZMK_SPLIT_BLE_CENTRAL_PERIPHERALS
@@ -177,15 +178,35 @@ static lv_obj_t *make_battery_label(lv_obj_t *parent, int y) {
 static void refresh_batteries(lv_timer_t *timer) {
     (void)timer;
     struct live_peer live[SOURCE_COUNT];
+#if !IS_ENABLED(CONFIG_MODU_BATTERY_TELEMETRY_CENTRAL)
     struct battery_sample values[SOURCE_COUNT];
+#endif
     struct modu_identities ids;
     collect_peers(live);
+#if IS_ENABLED(CONFIG_MODU_BATTERY_TELEMETRY_CENTRAL)
+    bool identity_changed = false;
+    for (int i = 0; i < SOURCE_COUNT; i++) {
+        struct modu_battery_detail d;
+        if (live[i].connected && modu_battery_detail_for_peer(live[i].peer, &d)) {
+            k_spinlock_key_t id_key = k_spin_lock(&state_lock);
+            identity_changed |= modu_learn_peer(&identities, d.side, live[i].peer);
+            k_spin_unlock(&state_lock, id_key);
+        }
+    }
+#if IS_ENABLED(CONFIG_SETTINGS)
+    if (identity_changed) k_work_reschedule(&save_identities_work, K_MSEC(500));
+#else
+    (void)identity_changed;
+#endif
+#endif
     k_spinlock_key_t key = k_spin_lock(&state_lock);
     ids = identities;
     for (int i = 0; i < SOURCE_COUNT; i++) {
         if (!live[i].connected ||
             memcmp(samples[i].peer, live[i].peer, MODU_PEER_BYTES) != 0) samples[i].valid = false;
+#if !IS_ENABLED(CONFIG_MODU_BATTERY_TELEMETRY_CENTRAL)
         values[i] = samples[i];
+#endif
     }
 #if IS_ENABLED(CONFIG_MODU_DONGLE_HAS_BATTERY)
     bool local_valid = dongle_battery_valid;
@@ -213,10 +234,19 @@ static void refresh_batteries(lv_timer_t *timer) {
         char hand = side == 0 ? 'L' : 'R';
         if (source < 0 && ids.side[side].known)
             snprintf(text, sizeof(text), "%c OFF", hand);
+#if IS_ENABLED(CONFIG_MODU_BATTERY_TELEMETRY_CENTRAL)
+        else {
+            struct modu_battery_detail d;
+            bool have_detail = source >= 0 && modu_battery_detail_for_peer(live[source].peer, &d);
+            modu_battery_format(text, sizeof(text), hand, have_detail ? &d : NULL,
+                                ((k_uptime_get() / 3000) % 2) != 0);
+        }
+#else
         else if (source < 0 || !values[source].valid)
             snprintf(text, sizeof(text), "%c  --%%", hand);
         else
             snprintf(text, sizeof(text), "%c %3u%%", hand, (unsigned)values[source].percent);
+#endif
         if (half_labels[side]) lv_label_set_text(half_labels[side], text);
     }
 }

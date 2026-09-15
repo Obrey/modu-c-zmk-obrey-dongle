@@ -1,0 +1,241 @@
+--- a/.github/workflows/build.yml
++++ b/.github/workflows/build.yml
+@@ -40,6 +40,8 @@
+         run: python3 scripts/test_full_config.py
+       - name: Native battery logic and adapter tests (not OLED rendering tests)
+         run: python3 scripts/test_status.py
++      - name: Battery telemetry adapters and sample validity (native mocks, not ARM)
++        run: python3 scripts/test_battery_telemetry.py
+ 
+   build:
+     name: Build keyboard halves, dongle variants, and reset firmware
+--- a/build.yaml
++++ b/build.yaml
+@@ -5,13 +5,13 @@
+   - board: ms88sf3/nrf52840
+     shield: modu_left
+     cmake-args: >-
+-      "-DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}/modu-c-firmware/modu-module;${GITHUB_WORKSPACE}/modu-c-firmware/zmk-pmw3610-driver;${GITHUB_WORKSPACE}/local-modules/modu-dongle" "-DKEYMAP_FILE=${GITHUB_WORKSPACE}/config/modu.keymap" -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n -DCONFIG_ZMK_USB=n -DCONFIG_MODU_LED_BREATH=n -DCONFIG_MODU_PERIPHERAL_STATUS_LED=y -DCONFIG_PWM=y -DCONFIG_ZMK_BATTERY_REPORTING=y -DCONFIG_BT_BAS=y "-DEXTRA_DTC_OVERLAY_FILE=${GITHUB_WORKSPACE}/config/dongle/modu_left.overlay"
++      "-DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}/modu-c-firmware/modu-module;${GITHUB_WORKSPACE}/modu-c-firmware/zmk-pmw3610-driver;${GITHUB_WORKSPACE}/local-modules/modu-dongle" "-DKEYMAP_FILE=${GITHUB_WORKSPACE}/config/modu.keymap" -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n -DCONFIG_ZMK_USB=n -DCONFIG_MODU_LED_BREATH=n -DCONFIG_MODU_PERIPHERAL_STATUS_LED=y -DCONFIG_PWM=y -DCONFIG_ZMK_BATTERY_REPORTING=y -DCONFIG_BT_BAS=y -DCONFIG_MODU_BATTERY_TELEMETRY_PERIPHERAL=y "-DEXTRA_DTC_OVERLAY_FILE=${GITHUB_WORKSPACE}/config/dongle/modu_left.overlay"
+     artifact-name: modu_left
+ 
+   - board: ms88sf3/nrf52840
+     shield: modu_right
+     cmake-args: >-
+-      "-DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}/modu-c-firmware/modu-module;${GITHUB_WORKSPACE}/modu-c-firmware/zmk-pmw3610-driver;${GITHUB_WORKSPACE}/local-modules/modu-dongle" "-DKEYMAP_FILE=${GITHUB_WORKSPACE}/config/modu.keymap" -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n -DCONFIG_ZMK_USB=n -DCONFIG_MODU_LED_BREATH=n -DCONFIG_MODU_PERIPHERAL_STATUS_LED=y -DCONFIG_PWM=y -DCONFIG_ZMK_BATTERY_REPORTING=y -DCONFIG_BT_BAS=y "-DEXTRA_DTC_OVERLAY_FILE=${GITHUB_WORKSPACE}/config/dongle/modu_right.overlay"
++      "-DZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}/modu-c-firmware/modu-module;${GITHUB_WORKSPACE}/modu-c-firmware/zmk-pmw3610-driver;${GITHUB_WORKSPACE}/local-modules/modu-dongle" "-DKEYMAP_FILE=${GITHUB_WORKSPACE}/config/modu.keymap" -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n -DCONFIG_ZMK_USB=n -DCONFIG_MODU_LED_BREATH=n -DCONFIG_MODU_PERIPHERAL_STATUS_LED=y -DCONFIG_PWM=y -DCONFIG_ZMK_BATTERY_REPORTING=y -DCONFIG_BT_BAS=y -DCONFIG_MODU_BATTERY_TELEMETRY_PERIPHERAL=y "-DEXTRA_DTC_OVERLAY_FILE=${GITHUB_WORKSPACE}/config/dongle/modu_right.overlay"
+     artifact-name: modu_right
+ 
+   - board: nice_nano/nrf52840/zmk
+--- a/docs/TEST_RESULTS.txt
++++ b/docs/TEST_RESULTS.txt
+@@ -1,22 +1,24 @@
++V6 HOST TEST LOG. Synthetic UF2 mentions below are NOT flashable firmware.
++
+ OK: metadata matches the 67-position upstream default_transform.
+ OK: every keymap layer has 67 bindings; default placeholders are at 51..56 only.
+ OK: six build targets, pinned ZMK/MODU revisions, overlay paths, and module paths are consistent.
+ OK: deterministic HEX normalization, UF2 structural checks, and notices are wired in.
+-Selected native UF2 for modu_left: /tmp/modu-c-selftest-en_t2b77/packaging/native-inputs/a/modu_left.uf2
+-Selected native UF2 for modu_right: /tmp/modu-c-selftest-en_t2b77/packaging/native-inputs/b/modu_right.uf2
+-Selected native UF2 for settings_reset: /tmp/modu-c-selftest-en_t2b77/packaging/native-inputs/c/settings_reset.uf2
++Selected native UF2 for modu_left: /tmp/modu-c-selftest-qnsfe1ha/packaging/native-inputs/a/modu_left.uf2
++Selected native UF2 for modu_right: /tmp/modu-c-selftest-qnsfe1ha/packaging/native-inputs/b/modu_right.uf2
++Selected native UF2 for settings_reset: /tmp/modu-c-selftest-qnsfe1ha/packaging/native-inputs/c/settings_reset.uf2
+ Verified modu_left.uf2: 2 blocks, sha256=2c767369a752388442ad648d4f36e28dcb9efcd24706e77fdf0ad05753258886
+ Verified modu_right.uf2: 2 blocks, sha256=d6e6bd2119a3a18035d1519a641b8b9547439fd12d827abf24997ea6a8c24cea
+ Verified settings_reset.uf2: 2 blocks, sha256=77d6db42e793258abf353e617bc3efe0b2a9c3368baba5d55e76b7ce2917addc
+-Converting validated HEX for modu_left: /tmp/modu-c-selftest-en_t2b77/packaging/hex-inputs/modu_left.hex
+-Converting validated HEX for modu_right: /tmp/modu-c-selftest-en_t2b77/packaging/hex-inputs/modu_right.hex
+-Converting validated HEX for settings_reset: /tmp/modu-c-selftest-en_t2b77/packaging/hex-inputs/settings_reset.hex
++Converting validated HEX for modu_left: /tmp/modu-c-selftest-qnsfe1ha/packaging/hex-inputs/modu_left.hex
++Converting validated HEX for modu_right: /tmp/modu-c-selftest-qnsfe1ha/packaging/hex-inputs/modu_right.hex
++Converting validated HEX for settings_reset: /tmp/modu-c-selftest-qnsfe1ha/packaging/hex-inputs/settings_reset.hex
+ Verified modu_left.uf2: 2 blocks, sha256=0c096f4a00674b93864cc3fac9f91d1e6d4f1fc4e4b14e2dbf8a2fdb555236a2
+ Verified modu_right.uf2: 2 blocks, sha256=1be298feec57cf234955db62d7aa21934ffd9241f84e00b5d913bf03656567d9
+ Verified settings_reset.uf2: 2 blocks, sha256=fb8683206277eabb0a4b31fecb2174dc087424754bba1b2cde303a6b146ca309
+-Selected native UF2 for modu_left: /tmp/modu-c-selftest-en_t2b77/packaging/identical/modu_left.uf2
+-Selected native UF2 for modu_right: /tmp/modu-c-selftest-en_t2b77/packaging/identical/modu_right.uf2
+-Selected native UF2 for settings_reset: /tmp/modu-c-selftest-en_t2b77/packaging/identical/settings_reset.uf2
++Selected native UF2 for modu_left: /tmp/modu-c-selftest-qnsfe1ha/packaging/identical/modu_left.uf2
++Selected native UF2 for modu_right: /tmp/modu-c-selftest-qnsfe1ha/packaging/identical/modu_right.uf2
++Selected native UF2 for settings_reset: /tmp/modu-c-selftest-qnsfe1ha/packaging/identical/settings_reset.uf2
+ OK: HEX normalization rejects corruption and removes terminal blank lines.
+ OK: UF2 magic, family ID, block tables, ranges, and address limits are enforced.
+ OK: native/HEX packaging rejects missing, duplicate, and identical half outputs.
+@@ -36,15 +38,15 @@
+ test_right_forwards_trackball_on_id0_only (__main__.FullConfigTests.test_right_forwards_trackball_on_id0_only) ... ok
+ 
+ ----------------------------------------------------------------------
+-Ran 14 tests in 0.009s
++Ran 14 tests in 0.019s
+ 
+ OK
+-Selected native UF2 for modu_left: /tmp/tmp63h3wovf/inputs/modu_left.uf2
+-Selected native UF2 for modu_right: /tmp/tmp63h3wovf/inputs/modu_right.uf2
+-Selected native UF2 for modu_dongle: /tmp/tmp63h3wovf/inputs/modu_dongle.uf2
+-Selected native UF2 for modu_dongle_oled: /tmp/tmp63h3wovf/inputs/modu_dongle_oled.uf2
+-Selected native UF2 for settings_reset_modu: /tmp/tmp63h3wovf/inputs/settings_reset_modu.uf2
+-Selected native UF2 for settings_reset_dongle: /tmp/tmp63h3wovf/inputs/settings_reset_dongle.uf2
++Selected native UF2 for modu_left: /tmp/tmpb0afo3tr/inputs/modu_left.uf2
++Selected native UF2 for modu_right: /tmp/tmpb0afo3tr/inputs/modu_right.uf2
++Selected native UF2 for modu_dongle: /tmp/tmpb0afo3tr/inputs/modu_dongle.uf2
++Selected native UF2 for modu_dongle_oled: /tmp/tmpb0afo3tr/inputs/modu_dongle_oled.uf2
++Selected native UF2 for settings_reset_modu: /tmp/tmpb0afo3tr/inputs/settings_reset_modu.uf2
++Selected native UF2 for settings_reset_dongle: /tmp/tmpb0afo3tr/inputs/settings_reset_dongle.uf2
+ Verified modu_left.uf2: 2 blocks, sha256=2c767369a752388442ad648d4f36e28dcb9efcd24706e77fdf0ad05753258886
+ Verified modu_right.uf2: 2 blocks, sha256=22d4ad65ed3d80b8d7a074dd3478064af5678e4d17a010c793721cd6dd832dd8
+ Verified modu_dongle.uf2: 2 blocks, sha256=9112557d95ffc472b8117cb8bb37da9a7efc7c82a44e701ec31f2cc76f5cb42a
+@@ -68,6 +70,18 @@
+ test_restore_original_module_and_requested_options (__main__.StatusTests.test_restore_original_module_and_requested_options) ... ok
+ 
+ ----------------------------------------------------------------------
+-Ran 12 tests in 0.263s
++Ran 12 tests in 1.102s
+ 
+ OK
++test_all_three_active_firmwares_enable_feature (__main__.BatteryTelemetryTests.test_all_three_active_firmwares_enable_feature) ... ok
++test_native_adapters_and_ui (__main__.BatteryTelemetryTests.test_native_adapters_and_ui) ... PASS: packet validation, error/zero distinction, voltage and 56px label bounds
++PASS: peripheral sample/error/voltage/age logic (mock sensor and BLE)
++PASS: central filtering/read lifetime/cache/age/disconnect logic (mock BLE)
++PASS: v6 UI side identification and real-zero/error/stale/disconnected distinctions (mock labels)
++ok
++test_sensor_config_not_guessed_and_existing_paths_not_replaced (__main__.BatteryTelemetryTests.test_sensor_config_not_guessed_and_existing_paths_not_replaced) ... ok
++
++----------------------------------------------------------------------
++Ran 3 tests in 0.996s
++
++OK
+--- a/local-modules/modu-dongle/CMakeLists.txt
++++ b/local-modules/modu-dongle/CMakeLists.txt
+@@ -1,7 +1,9 @@
+ # SPDX-License-Identifier: MIT
+ # Standard Zephyr module library; also works while find_package(Zephyr) loads modules.
+ if(NOT CONFIG_SHIELD_MODU_DONGLE AND NOT CONFIG_SHIELD_MODU_DONGLE_OLED
+-   AND NOT CONFIG_MODU_PERIPHERAL_STATUS_LED)
++   AND NOT CONFIG_MODU_PERIPHERAL_STATUS_LED
++   AND NOT CONFIG_MODU_BATTERY_TELEMETRY_PERIPHERAL
++   AND NOT CONFIG_MODU_BATTERY_TELEMETRY_CENTRAL)
+   return()
+ endif()
+ zephyr_library_named(modu_dongle_runtime)
+@@ -29,3 +31,10 @@
+   endif()
+   include(${CMAKE_CURRENT_LIST_DIR}/original_display.cmake)
+ endif()
++
++if(CONFIG_MODU_BATTERY_TELEMETRY_PERIPHERAL)
++  zephyr_library_sources(${CMAKE_CURRENT_LIST_DIR}/src/battery_telemetry_peripheral.c)
++endif()
++if(CONFIG_MODU_BATTERY_TELEMETRY_CENTRAL)
++  zephyr_library_sources(${CMAKE_CURRENT_LIST_DIR}/src/battery_telemetry_central.c)
++endif()
+--- a/local-modules/modu-dongle/Kconfig
++++ b/local-modules/modu-dongle/Kconfig
+@@ -67,4 +67,21 @@
+       Only meaningful if a real battery is connected to a valid measurement
+       circuit. For a USB-only dongle set this to n; D then reads USB or EXT.
+ endif
++config MODU_BATTERY_TELEMETRY_PERIPHERAL
++    bool "Report measured voltage, sensor status and hand identity to the dongle"
++    depends on ZMK_SPLIT && !ZMK_SPLIT_ROLE_CENTRAL && ZMK_BLE
++    depends on ZMK_BATTERY_REPORTING && SENSOR
++    default n
++    help
++      A read-only encrypted BLE diagnostic service. Preserves the original
++      battery sensor pins, voltage-divider ratio and normal BAS reporting.
++
++config MODU_BATTERY_TELEMETRY_CENTRAL
++    bool "Read both keyboard sensor results, including voltage and errors"
++    depends on ZMK_SPLIT && ZMK_SPLIT_ROLE_CENTRAL && ZMK_BLE
++    select BT_GATT_CLIENT
++    default n
++    help
++      Periodically polls the read-only diagnostic characteristic on each
++      existing split link. Does not connect to additional devices.
+ endmenu
+--- a/local-modules/modu-dongle/boards/shields/modu_dongle/modu_dongle_oled.conf
++++ b/local-modules/modu-dongle/boards/shields/modu_dongle/modu_dongle_oled.conf
+@@ -61,3 +61,6 @@
+ CONFIG_ZMK_DISPLAY_WORK_QUEUE_DEDICATED=y
+ CONFIG_ZMK_DISPLAY_DEDICATED_THREAD_STACK_SIZE=4096
+ CONFIG_ZMK_DISPLAY_TICK_PERIOD_MS=50
++
++# v6: verified L/R samples + voltage + sensor status, not BAS zero alone.
++CONFIG_MODU_BATTERY_TELEMETRY_CENTRAL=y
+--- a/local-modules/modu-dongle/src/dongle_status.c
++++ b/local-modules/modu-dongle/src/dongle_status.c
+@@ -17,6 +17,7 @@
+ #include <zmk/usb.h>
+ #include "battery_status.h"
+ #include "status_logic.h"
++#include "battery_telemetry.h"
+ 
+ LOG_MODULE_REGISTER(modu_status, CONFIG_LOG_DEFAULT_LEVEL);
+ #define SOURCE_COUNT CONFIG_ZMK_SPLIT_BLE_CENTRAL_PERIPHERALS
+@@ -177,15 +178,35 @@
+ static void refresh_batteries(lv_timer_t *timer) {
+     (void)timer;
+     struct live_peer live[SOURCE_COUNT];
++#if !IS_ENABLED(CONFIG_MODU_BATTERY_TELEMETRY_CENTRAL)
+     struct battery_sample values[SOURCE_COUNT];
++#endif
+     struct modu_identities ids;
+     collect_peers(live);
++#if IS_ENABLED(CONFIG_MODU_BATTERY_TELEMETRY_CENTRAL)
++    bool identity_changed = false;
++    for (int i = 0; i < SOURCE_COUNT; i++) {
++        struct modu_battery_detail d;
++        if (live[i].connected && modu_battery_detail_for_peer(live[i].peer, &d)) {
++            k_spinlock_key_t id_key = k_spin_lock(&state_lock);
++            identity_changed |= modu_learn_peer(&identities, d.side, live[i].peer);
++            k_spin_unlock(&state_lock, id_key);
++        }
++    }
++#if IS_ENABLED(CONFIG_SETTINGS)
++    if (identity_changed) k_work_reschedule(&save_identities_work, K_MSEC(500));
++#else
++    (void)identity_changed;
++#endif
++#endif
+     k_spinlock_key_t key = k_spin_lock(&state_lock);
+     ids = identities;
+     for (int i = 0; i < SOURCE_COUNT; i++) {
+         if (!live[i].connected ||
+             memcmp(samples[i].peer, live[i].peer, MODU_PEER_BYTES) != 0) samples[i].valid = false;
++#if !IS_ENABLED(CONFIG_MODU_BATTERY_TELEMETRY_CENTRAL)
+         values[i] = samples[i];
++#endif
+     }
+ #if IS_ENABLED(CONFIG_MODU_DONGLE_HAS_BATTERY)
+     bool local_valid = dongle_battery_valid;
+@@ -213,10 +234,19 @@
+         char hand = side == 0 ? 'L' : 'R';
+         if (source < 0 && ids.side[side].known)
+             snprintf(text, sizeof(text), "%c OFF", hand);
++#if IS_ENABLED(CONFIG_MODU_BATTERY_TELEMETRY_CENTRAL)
++        else {
++            struct modu_battery_detail d;
++            bool have_detail = source >= 0 && modu_battery_detail_for_peer(live[source].peer, &d);
++            modu_battery_format(text, sizeof(text), hand, have_detail ? &d : NULL,
++                                ((k_uptime_get() / 3000) % 2) != 0);
++        }
++#else
+         else if (source < 0 || !values[source].valid)
+             snprintf(text, sizeof(text), "%c  --%%", hand);
+         else
+             snprintf(text, sizeof(text), "%c %3u%%", hand, (unsigned)values[source].percent);
++#endif
+         if (half_labels[side]) lv_label_set_text(half_labels[side], text);
+     }
+ }
+--- a/tests/status_ui_mock.h
++++ b/tests/status_ui_mock.h
+@@ -112,3 +112,7 @@
+ static inline lv_timer_t *lv_timer_create(void (*f)(lv_timer_t *),uint32_t ms,void *data) { (void)f;(void)ms;(void)data; static lv_timer_t timer; return &timer; }
+ 
+ static inline void lv_obj_set_style_text_letter_space(lv_obj_t *p,int c,int s) { (void)p;(void)c;(void)s; }
++
++#ifndef CONFIG_MODU_BATTERY_TELEMETRY_CENTRAL
++#define CONFIG_MODU_BATTERY_TELEMETRY_CENTRAL 0
++#endif

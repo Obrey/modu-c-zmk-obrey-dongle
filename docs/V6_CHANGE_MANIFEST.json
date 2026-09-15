@@ -1,0 +1,45 @@
+{
+  "base": "modu-c-dongle-v5-theme-fix.zip",
+  "changed": [
+    ".github/workflows/build.yml",
+    "README.md",
+    "THIRD_PARTY_NOTICES.md",
+    "VALIDATION.md",
+    "build.yaml",
+    "docs/FLASHING_KO.md",
+    "docs/TEST_RESULTS.txt",
+    "local-modules/modu-dongle/CMakeLists.txt",
+    "local-modules/modu-dongle/Kconfig",
+    "local-modules/modu-dongle/boards/shields/modu_dongle/modu_dongle_oled.conf",
+    "local-modules/modu-dongle/src/dongle_status.c",
+    "tests/status_ui_mock.h"
+  ],
+  "new": [
+    "docs/UNCHANGED_FROM_V5.json",
+    "docs/V6_BATTERY_MONITOR_KO.md",
+    "local-modules/modu-dongle/src/battery_telemetry.h",
+    "local-modules/modu-dongle/src/battery_telemetry_central.c",
+    "local-modules/modu-dongle/src/battery_telemetry_peripheral.c",
+    "local-modules/modu-dongle/src/battery_telemetry_protocol.h",
+    "scripts/test_battery_telemetry.py",
+    "tests/battery_central_test.c",
+    "tests/battery_peripheral_test.c",
+    "tests/battery_protocol_test.c",
+    "tests/battery_runtime_mock.h",
+    "tests/battery_ui_test.c"
+  ],
+  "unchanged_verified": [
+    "config/modu.keymap",
+    "config/modu_dongle.keymap",
+    "config/modu_dongle_oled.keymap",
+    "config/dongle/modu_left.overlay",
+    "config/dongle/modu_right.overlay",
+    "config/west.yml",
+    "local-modules/modu-dongle/src/peripheral_status_led.c",
+    "local-modules/modu-dongle/src/status_logic.h",
+    "local-modules/modu-dongle/original_display.cmake",
+    "local-modules/modu-dongle/boards/shields/modu_dongle/modu_dongle.conf",
+    "local-modules/modu-dongle/boards/shields/modu_dongle/modu_dongle_oled.overlay",
+    "local-modules/modu-dongle/boards/shields/modu_dongle/modu-dongle-common.dtsi"
+  ]
+}

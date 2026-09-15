@@ -40,6 +40,8 @@ jobs:
         run: python3 scripts/test_full_config.py
       - name: Native battery logic and adapter tests (not OLED rendering tests)
         run: python3 scripts/test_status.py
+      - name: Battery telemetry adapters and sample validity (native mocks, not ARM)
+        run: python3 scripts/test_battery_telemetry.py
 
   build:
     name: Build keyboard halves, dongle variants, and reset firmware

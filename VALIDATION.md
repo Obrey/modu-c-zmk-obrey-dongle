@@ -1,44 +1,36 @@
-# MAC v3 validation record — 2026-09-15
+# v6 validation record
 
-## What was executed
+This is a source-only feature/diagnostic addition, not a validated firmware binary.
 
-- `python3 scripts/validate.py`: 67-position metadata, layer structure, source pins, build matrix, overlay/module paths and workflow/packaging contracts.
-- `python3 scripts/selftest.py`: Intel HEX normalization/corruption checks and UF2 packaging using deliberately synthetic fixtures, never distributable device firmware.
-- `python3 scripts/test_full_config.py`: 14 existing configuration/packaging regressions.
-- `python3 scripts/test_status.py`: 9 additional host tests, including:
-  - Pure C helper code compiled by native GCC and executed with assertions for key position -> side, address identity, persistence validation, LED phase/channel selection and unknown/0/100/invalid battery values.
-  - The actual `dongle_status.c` compiled and executed against test doubles of the relevant Zephyr/ZMK/LVGL API calls, with dongle-battery support both disabled and enabled.
-  - UI simulation covers reversed pairing order, separate host vs half connectivity, percentage values, disconnect/reconnect, stale/changed peers, layer changes, settings restoration, invalid settings, fixed object count across 1,000 updates, and widget bounding boxes in 128x64.
-  - Source checks cover mono/custom screen settings, actual split connection LED functions, no LVGL calls in event callbacks, canonical keymap wrappers, no Studio keymap overrides, and the battery event dependency fix.
-- YAML parsing of the manifest, module metadata, workflow and build matrix.
-- Release source keymap compared to the supplied custom keymap: all seven original layer binding arrays match except the requested 5/6 holdtap changes, plus two added boot layers. `KEYMAP_PROVENANCE.json` records the hashes and exact binding changes.
+## Actually executed in this session
 
-The executed results are in `docs/TEST_RESULTS.txt`. The native test API doubles are in `tests/`.
-They check C logic against the described API contracts; they are not the actual Zephyr or LVGL implementations.
+| Check | Result | What it establishes |
+|---|---|---|
+| `python scripts/validate.py` | PASS | Key count, layout metadata, build target/module paths, pinned revisions |
+| `python scripts/selftest.py` | PASS | Packaging/HEX/UF2 safeguards using temporary SYNTHETIC test data |
+| `python scripts/test_full_config.py` | 14 tests PASS | Existing boot, split routing, board/output-name source checks and synthetic packaging |
+| `python scripts/test_status.py` | 12 tests PASS | Existing status helpers, legacy battery UI mock, CMake fixture and theme/source checks |
+| `python scripts/test_battery_telemetry.py` | 3 tests PASS | 4 native C test programs plus feature configuration checks |
+| v5 byte comparison | 12 files identical | User keymaps, LED logic, trackball overlays, display pins/theme adapter and upstream manifest |
 
-## What was NOT executed
+The four new C test programs cover packet length/version/side/error validation;
+sensor not-ready, fetch failure, voltage/SOC read failure, valid zero and sample age;
+central host filtering, pending-read parameter lifetime, cache invalidation and refs;
+and detailed UI mapping including reversed connection order, unknown/zero/error/stale/off.
+They compile the new adapter source against test doubles, not against the real Zephyr SDK.
+The test doubles do not emulate ADC hardware, radio scheduling, actual OLED rendering or
+all implementation details of the GATT stack.
 
-- A real Zephyr/ZMK ARM compilation or linker invocation with the nRF52840 toolchain.
-- Generated Devicetree/Kconfig evaluation against the complete west dependency workspace.
-- A firmware run on the user's dongle, OLED, trackballs, battery sensors or LEDs.
-- A real Bluetooth battery event, persistent flash transaction, radio connection or host HID test.
-- A physical test of OLED memory use, latency, three-second boot gestures or power consumption.
+## NOT executed / NOT established
 
-This working environment has no ZMK west workspace or ARM SDK. Its container network could not resolve
-the dependency host during an attempted retrieval; primary source headers were inspected with the web tool.
-There is no claim that the resulting six firmware targets already compile or work on hardware.
-GitHub Actions performs the actual firmware build on the user's commit. Only a successful run provides
-compiler/linker evidence; hardware behavior still requires a device test.
+- No full Zephyr/ZMK ARM firmware build or link.
+- No genuine UF2 binary was generated; fixture UF2s lived only in temporary test directories.
+- No testing on the user's dongle or keyboards.
+- No validation of sensor pin wiring, resistor ratio, actual battery voltage, percentage accuracy,
+  power consumption or radio/USB/OLED stability.
+- No claim that the underlying cause of the previous 0% has been identified or calibrated away.
 
-## Prior user observation, not a test performed here
-
-The user reports that the previous headless dongle firmware accepts keyboard input. That narrows the
-problem and motivates preserving the working radio/matrix/trackball configuration, not resetting bonds.
-The earlier OLED failure and the reported different live keymap are not definitively diagnosed from
-that observation alone. MAC v3 adds isolated rendering/config corrections and visible build/layer identity
-rather than asserting an unverified single root cause.
-
-## Rollback
-
-Retain the previously working headless UF2. New build artifacts place the headless target under
-`fallback/`. Do not use `reset/` during the ordinary update of an already connected setup.
+The ARM toolchain/dependency checkout is not installed in this runtime, and a direct attempt
+to retrieve build dependencies failed because network name resolution was unavailable.
+GitHub Actions remains the actual firmware build step. Keep the previously working firmware
+for rollback. v6 reads and distinguishes measurements; it does not invent a corrected percentage.

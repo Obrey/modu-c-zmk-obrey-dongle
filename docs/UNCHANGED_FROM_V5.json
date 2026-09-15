@@ -1,0 +1,14 @@
+{
+  "config/modu.keymap": "1690544cd320d7216727f1c5ca50aec82c572684b15e639293a656b11ecf9985",
+  "config/modu_dongle.keymap": "7d70118711e09a0386ae7bd931e9a260ab39bd72e4d10218128a6d339ab739a9",
+  "config/modu_dongle_oled.keymap": "7d70118711e09a0386ae7bd931e9a260ab39bd72e4d10218128a6d339ab739a9",
+  "config/dongle/modu_left.overlay": "476eb82cdd0f7986ecbb8a1b4391284a4fb1bc4289fa61b03cf56e67965ca456",
+  "config/dongle/modu_right.overlay": "731197bbd7d888964bd95a59bc505370a73a8540f939c171d2837acef2fad3f4",
+  "config/west.yml": "5661d102bfbea6ead6495083270ab9b86819d1cebff478df349b7dc2b849400f",
+  "local-modules/modu-dongle/src/peripheral_status_led.c": "060e17d3b059ff059e7dcdc85160e045c203a3be11968600f645d9a92fb466bf",
+  "local-modules/modu-dongle/src/status_logic.h": "dd9eebb8e0fc2a42da184d6ca6870ae00e0474ac95a649ac874fc3ffbe1ad25d",
+  "local-modules/modu-dongle/original_display.cmake": "8dcb37722186d656bd2ef3e9a52716b319d18d157116c0f019e301de86e1a98b",
+  "local-modules/modu-dongle/boards/shields/modu_dongle/modu_dongle.conf": "4d9b3d49538d5d4e2cde34144e24a9780b6a2a13d973230b68333779b3478146",
+  "local-modules/modu-dongle/boards/shields/modu_dongle/modu_dongle_oled.overlay": "306ad86dbffa19d213e77a8edb6ca043f37e3506fdac35e96074e8e8b0d87c41",
+  "local-modules/modu-dongle/boards/shields/modu_dongle/modu-dongle-common.dtsi": "276ef5347094c3266965fab4f1eaa1ce403e3ccbe32a85517f1d8acfb7bc9ff8"
+}

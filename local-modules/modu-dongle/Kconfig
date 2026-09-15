@@ -67,4 +67,21 @@ config MODU_DONGLE_HAS_BATTERY
       Only meaningful if a real battery is connected to a valid measurement
       circuit. For a USB-only dongle set this to n; D then reads USB or EXT.
 endif
+config MODU_BATTERY_TELEMETRY_PERIPHERAL
+    bool "Report measured voltage, sensor status and hand identity to the dongle"
+    depends on ZMK_SPLIT && !ZMK_SPLIT_ROLE_CENTRAL && ZMK_BLE
+    depends on ZMK_BATTERY_REPORTING && SENSOR
+    default n
+    help
+      A read-only encrypted BLE diagnostic service. Preserves the original
+      battery sensor pins, voltage-divider ratio and normal BAS reporting.
+
+config MODU_BATTERY_TELEMETRY_CENTRAL
+    bool "Read both keyboard sensor results, including voltage and errors"
+    depends on ZMK_SPLIT && ZMK_SPLIT_ROLE_CENTRAL && ZMK_BLE
+    select BT_GATT_CLIENT
+    default n
+    help
+      Periodically polls the read-only diagnostic characteristic on each
+      existing split link. Does not connect to additional devices.
 endmenu

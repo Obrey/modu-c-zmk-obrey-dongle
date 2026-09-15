@@ -1,0 +1,50 @@
+{
+  "config/modu.keymap": {
+    "unchanged": true,
+    "sha256": "1690544cd320d7216727f1c5ca50aec82c572684b15e639293a656b11ecf9985"
+  },
+  "config/west.yml": {
+    "unchanged": true,
+    "sha256": "5661d102bfbea6ead6495083270ab9b86819d1cebff478df349b7dc2b849400f"
+  },
+  "build.yaml": {
+    "unchanged": true,
+    "sha256": "7506376569f3c1004d523e398a06e983c8102b69b8640b7633b4534f0220d6f5"
+  },
+  ".github/workflows/build.yml": {
+    "unchanged": true,
+    "sha256": "0a5e8183739adda3805dbae2357094466809632d901ff8214276c9ee9e089318"
+  },
+  "config/dongle/modu_left.overlay": {
+    "unchanged": true,
+    "sha256": "476eb82cdd0f7986ecbb8a1b4391284a4fb1bc4289fa61b03cf56e67965ca456"
+  },
+  "config/dongle/modu_right.overlay": {
+    "unchanged": true,
+    "sha256": "731197bbd7d888964bd95a59bc505370a73a8540f939c171d2837acef2fad3f4"
+  },
+  "local-modules/modu-dongle/src/peripheral_status_led.c": {
+    "unchanged": true,
+    "sha256": "060e17d3b059ff059e7dcdc85160e045c203a3be11968600f645d9a92fb466bf"
+  },
+  "local-modules/modu-dongle/src/dongle_status.c": {
+    "unchanged": true,
+    "sha256": "2aafeab22232df0648cb289ba3abced0c602a25aa7ba6ab5b4ee6ed5b8e3f622"
+  },
+  "local-modules/modu-dongle/src/status_logic.h": {
+    "unchanged": true,
+    "sha256": "dd9eebb8e0fc2a42da184d6ca6870ae00e0474ac95a649ac874fc3ffbe1ad25d"
+  },
+  "local-modules/modu-dongle/src/keymap_guard.c": {
+    "unchanged": true,
+    "sha256": "c1ea319eeed5b2fed1e9efb6a80e0deedd157d8e6bde267861d688b19932940a"
+  },
+  "local-modules/modu-dongle/boards/shields/modu_dongle/modu_dongle.conf": {
+    "unchanged": true,
+    "sha256": "4d9b3d49538d5d4e2cde34144e24a9780b6a2a13d973230b68333779b3478146"
+  },
+  "local-modules/modu-dongle/boards/shields/modu_dongle/modu_dongle_oled.overlay": {
+    "unchanged": true,
+    "sha256": "306ad86dbffa19d213e77a8edb6ca043f37e3506fdac35e96074e8e8b0d87c41"
+  }
+}
