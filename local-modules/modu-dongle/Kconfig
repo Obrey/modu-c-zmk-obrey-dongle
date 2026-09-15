@@ -84,4 +84,18 @@ config MODU_BATTERY_TELEMETRY_CENTRAL
     help
       Periodically polls the read-only diagnostic characteristic on each
       existing split link. Does not connect to additional devices.
+config MODU_BATTERY_ACTIVE_INTERVAL
+    int "Active keyboard diagnostic sample interval in seconds"
+    depends on MODU_BATTERY_TELEMETRY_PERIPHERAL
+    range 30 120
+    default 60
+
+config MODU_BATTERY_IDLE_INTERVAL
+    int "Idle keyboard diagnostic sample interval in seconds"
+    depends on MODU_BATTERY_TELEMETRY_PERIPHERAL
+    range 180 600
+    default 300
+    help
+      Keep a sparse measurement while idle, including during charging.
+      GATT reads return cached samples and do not force idle ADC sampling.
 endmenu

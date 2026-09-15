@@ -102,3 +102,7 @@ additions using public Zephyr sensor/GATT APIs and the previously documented
 pinned ZMK split-source adapter. No MODU driver or hardware source was copied
 into these files. Original MODU source remains fetched at the same revision
 and under its original upstream license. The voltage-divider values are not changed.
+
+## v7 connected-standby update
+
+The custom battery protocol/scheduler/test changes are MIT licensed; the LED adapter retains the existing EKS non-commercial license notice because it preserves vendor-specific PWM wiring behavior. All existing upstream version pins and license conditions are retained. No fetched upstream firmware source, font file or compiled firmware is embedded in this source archive. See docs/V7_BATTERY_AND_POWER_KO.md for primary-source references and validation limitations.

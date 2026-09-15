@@ -58,6 +58,9 @@ bool modu_battery_detail_for_peer(const uint8_t peer[MODU_BATTERY_PEER_BYTES],
         *out = cache[i].detail;
         int64_t age = out->age_seconds + (k_uptime_get() - cache[i].received_at) / 1000;
         out->age_seconds = (uint16_t)MIN(age, UINT16_MAX);
+        /* A cached idle flag must not hide a stalled BLE read path. */
+        if ((k_uptime_get() - cache[i].received_at) / 1000 > MODU_BATTERY_STALE_SECONDS)
+            out->age_seconds = UINT16_MAX;
         found = true;
         break;
     }
@@ -70,6 +73,7 @@ static uint8_t read_reply(struct bt_conn *conn, uint8_t err, struct bt_gatt_read
     const size_t index = (size_t)(client - clients);
     struct modu_battery_detail detail;
     struct bt_conn_info info;
+    int retry_ms = 10000;
     /* Do not accept a reply that arrives while an old link is being removed. */
     if (!err && bt_conn_get_info(conn, &info) == 0 && info.state == BT_CONN_STATE_CONNECTED &&
         modu_battery_decode(data, length, &detail)) {
@@ -79,12 +83,16 @@ static uint8_t read_reply(struct bt_conn *conn, uint8_t err, struct bt_gatt_read
         cache[index].received_at = k_uptime_get();
         memcpy(cache[index].peer, client->request_peer, MODU_BATTERY_PEER_BYTES);
         k_spin_unlock(&cache_lock, key);
+        if (detail.result == MODU_BAT_OK)
+            retry_ms = (detail.flags & MODU_BATTERY_FLAG_IDLE) ? 60000 : 30000;
+        else if (detail.result == MODU_BAT_WAIT) retry_ms = 2000;
         LOG_DBG("hand=%u mv=%u pct=%u result=%u err=%d age=%u", detail.side,
                 detail.millivolts, detail.percent, detail.result, detail.error, detail.age_seconds);
     } else if (err) {
         LOG_DBG("Battery detail read source %u failed ATT=%u", (unsigned)index, err);
     }
     client->completed_at = k_uptime_get();
+    client->next_due = client->completed_at + retry_ms;
     atomic_set(&client->state, 2);
     return BT_GATT_ITER_STOP;
 }

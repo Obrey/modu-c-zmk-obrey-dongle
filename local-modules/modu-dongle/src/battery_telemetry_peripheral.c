@@ -15,6 +15,8 @@
 #include <zephyr/logging/log.h>
 #include <zmk/workqueue.h>
 #include <zmk/event_manager.h>
+#include <zmk/activity.h>
+#include <zmk/events/activity_state_changed.h>
 #include <zmk/events/split_peripheral_status_changed.h>
 #include <zmk/split/bluetooth/peripheral.h>
 #include "battery_telemetry_protocol.h"
@@ -39,15 +41,24 @@ static struct modu_battery_detail detail = {
 };
 static int64_t sampled_at = -1;
 static void sample_work_fn(struct k_work *work);
-K_WORK_DEFINE(modu_battery_sample_work, sample_work_fn);
-
+K_WORK_DELAYABLE_DEFINE(modu_battery_sample_work, sample_work_fn);
+static unsigned sample_interval(void) {
+    return zmk_activity_get_state() == ZMK_ACTIVITY_ACTIVE ?
+        CONFIG_MODU_BATTERY_ACTIVE_INTERVAL : CONFIG_MODU_BATTERY_IDLE_INTERVAL;
+}
+static bool can_sample(void) {
+    return zmk_split_bt_peripheral_is_connected() &&
+           zmk_activity_get_state() != ZMK_ACTIVITY_SLEEP;
+}
 static void queue_sample(void) {
-    /* The built-in battery worker uses this same queue: do not race its ADC
-     * fetch with another thread. Never do ADC I/O in the Bluetooth callback. */
-    k_work_submit_to_queue(zmk_workqueue_lowprio_work_q(), &modu_battery_sample_work);
+    /* Built-in battery work uses this queue too. Never fetch ADC from BLE. */
+    if (can_sample())
+        k_work_reschedule_for_queue(zmk_workqueue_lowprio_work_q(),
+                                     &modu_battery_sample_work, K_NO_WAIT);
 }
 static void sample_work_fn(struct k_work *work) {
     (void)work;
+    if (!can_sample()) return;
     struct modu_battery_detail next = {
         .side = MODU_THIS_SIDE, .result = MODU_BAT_NOT_READY, .percent = 255,
     };
@@ -79,13 +90,10 @@ finished:
     k_spin_unlock(&detail_lock, key);
     LOG_DBG("hand=%u status=%u mv=%u pct=%u err=%d", next.side, next.result,
             next.millivolts, next.percent, next.error);
+    if (can_sample())
+        k_work_reschedule_for_queue(zmk_workqueue_lowprio_work_q(),
+            &modu_battery_sample_work, K_SECONDS(sample_interval()));
 }
-static void sample_timer_fn(struct k_timer *timer) {
-    (void)timer;
-    if (zmk_split_bt_peripheral_is_connected()) queue_sample();
-}
-K_TIMER_DEFINE(modu_battery_sample_timer, sample_timer_fn, NULL);
-
 static ssize_t read_detail(struct bt_conn *conn, const struct bt_gatt_attr *attr,
                            void *buf, uint16_t length, uint16_t offset) {
     struct modu_battery_detail snapshot;
@@ -94,7 +102,10 @@ static ssize_t read_detail(struct bt_conn *conn, const struct bt_gatt_attr *attr
     int64_t age = sampled_at < 0 ? UINT16_MAX : (k_uptime_get() - sampled_at) / 1000;
     snapshot.age_seconds = (uint16_t)MIN(age, UINT16_MAX);
     k_spin_unlock(&detail_lock, key);
-    if (snapshot.result == MODU_BAT_WAIT || snapshot.age_seconds >= 30) queue_sample();
+    bool active = zmk_activity_get_state() == ZMK_ACTIVITY_ACTIVE;
+    snapshot.flags = active ? 0 : MODU_BATTERY_FLAG_IDLE;
+    if (snapshot.result == MODU_BAT_WAIT ||
+        (active && snapshot.age_seconds >= CONFIG_MODU_BATTERY_ACTIVE_INTERVAL)) queue_sample();
     uint8_t packet[MODU_BATTERY_PACKET_SIZE];
     modu_battery_encode(&snapshot, packet);
     return bt_gatt_attr_read(conn, attr, buf, length, offset, packet, sizeof(packet));
@@ -107,13 +118,31 @@ BT_GATT_SERVICE_DEFINE(modu_battery_telemetry_service,
 static int link_event(const zmk_event_t *event) {
     const struct zmk_split_peripheral_status_changed *link =
         as_zmk_split_peripheral_status_changed(event);
-    if (link && link->connected) queue_sample();
+    if (link) {
+        if (link->connected) queue_sample();
+        else k_work_cancel_delayable(&modu_battery_sample_work);
+    }
+    return ZMK_EV_EVENT_BUBBLE;
+}
+static int activity_event(const zmk_event_t *event) {
+    (void)event;
+    if (!can_sample()) {
+        k_work_cancel_delayable(&modu_battery_sample_work);
+    } else if (zmk_activity_get_state() == ZMK_ACTIVITY_ACTIVE) {
+        queue_sample(); /* Refresh on wake from connected standby. */
+    } else {
+        k_work_reschedule_for_queue(zmk_workqueue_lowprio_work_q(),
+            &modu_battery_sample_work, K_SECONDS(CONFIG_MODU_BATTERY_IDLE_INTERVAL));
+    }
     return ZMK_EV_EVENT_BUBBLE;
 }
 ZMK_LISTENER(modu_battery_telemetry_link, link_event);
 ZMK_SUBSCRIPTION(modu_battery_telemetry_link, zmk_split_peripheral_status_changed);
+ZMK_LISTENER(modu_battery_telemetry_activity, activity_event);
+ZMK_SUBSCRIPTION(modu_battery_telemetry_activity, zmk_activity_state_changed);
 static int telemetry_init(void) {
-    k_timer_start(&modu_battery_sample_timer, K_SECONDS(2), K_SECONDS(30));
+    k_work_reschedule_for_queue(zmk_workqueue_lowprio_work_q(),
+                                &modu_battery_sample_work, K_SECONDS(2));
     return 0;
 }
 SYS_INIT(telemetry_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);

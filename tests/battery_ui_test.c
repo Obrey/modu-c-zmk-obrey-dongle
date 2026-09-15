@@ -31,8 +31,12 @@ int main(void) {
     details[1].result=MODU_BAT_OK;details[1].percent=0;details[1].millivolts=3300;
     refresh_batteries(NULL);assert(!strcmp(half_labels[0]->text,"L   0%"));
     mock_clock=3000;refresh_batteries(NULL);assert(!strcmp(half_labels[0]->text,"L 3.30V"));
-    details[1].age_seconds=101;refresh_batteries(NULL);assert(!strcmp(half_labels[0]->text,"L OLD"));
+    details[1].age_seconds=181;refresh_batteries(NULL);assert(!strcmp(half_labels[0]->text,"L OLD"));
+    details[1].flags=MODU_BATTERY_FLAG_IDLE;details[1].age_seconds=300;
+    refresh_batteries(NULL);assert(!strcmp(half_labels[0]->text,"L~3.30V"));
+    mock_clock=0;refresh_batteries(NULL);assert(!strcmp(half_labels[0]->text,"L~  0%"));
+    details[1].age_seconds=901;refresh_batteries(NULL);assert(!strcmp(half_labels[0]->text,"L OLD"));
     mock_conns[1].info.state=0;refresh_batteries(NULL);assert(!strcmp(half_labels[0]->text,"L OFF"));
     unsigned count=object_count;for(int i=0;i<1000;i++) refresh_batteries(NULL);assert(object_count==count);
-    puts("PASS: v6 UI side identification and real-zero/error/stale/disconnected distinctions (mock labels)");return 0;
+    puts("PASS: v7 UI side identification and real-zero/error/stale/disconnected distinctions (mock labels)");return 0;
 }

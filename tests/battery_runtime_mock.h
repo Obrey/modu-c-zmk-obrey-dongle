@@ -8,8 +8,18 @@
 #include <sys/types.h>
 #define CONFIG_LOG_DEFAULT_LEVEL 1
 #define CONFIG_APPLICATION_INIT_PRIORITY 90
+#ifndef CONFIG_SHIELD_MODU_LEFT
 #define CONFIG_SHIELD_MODU_LEFT 1
+#endif
+#ifndef CONFIG_SHIELD_MODU_RIGHT
 #define CONFIG_SHIELD_MODU_RIGHT 0
+#endif
+#define CONFIG_ZMK_SPLIT_ROLE_CENTRAL 0
+#define CONFIG_ZMK_SLEEP 0
+#define CONFIG_MODU_STATUS_LED_BRIGHTNESS 6
+#define CONFIG_MODU_BATTERY_ACTIVE_INTERVAL 60
+#define CONFIG_MODU_BATTERY_IDLE_INTERVAL 300
+#define ARRAY_SIZE(a) (sizeof(a)/sizeof((a)[0]))
 #define CONFIG_ZMK_SPLIT_BLE_CENTRAL_PERIPHERALS 2
 #define IS_ENABLED(x) (x)
 #define BUILD_ASSERT(c,m) _Static_assert(c,m)
@@ -23,6 +33,8 @@
 #define LOG_ERR(...) ((void)0)
 #define SYS_INIT(...)
 #define K_SECONDS(x) ((x)*1000)
+#define K_MSEC(x) (x)
+#define K_NO_WAIT 0
 #define K_LOWEST_APPLICATION_THREAD_PRIO 14
 struct k_spinlock {int dummy;};
 typedef int k_spinlock_key_t;
@@ -30,6 +42,10 @@ static int k_spin_lock(struct k_spinlock *p) {(void)p; return 0;}
 static void k_spin_unlock(struct k_spinlock *p,int k) {(void)p; (void)k;}
 static int64_t mock_clock;
 static int64_t k_uptime_get(void) {return mock_clock;}
+static uint32_t k_uptime_get_32(void) {return (uint32_t)mock_clock;}
+enum zmk_activity_state {ZMK_ACTIVITY_ACTIVE, ZMK_ACTIVITY_IDLE, ZMK_ACTIVITY_SLEEP};
+static enum zmk_activity_state mock_activity = ZMK_ACTIVITY_ACTIVE;
+static enum zmk_activity_state zmk_activity_get_state(void) {return mock_activity;}
 struct k_work {void (*callback)(struct k_work *);};
 struct k_work_delayable {struct k_work work;};
 struct k_work_q {int dummy;};
@@ -39,7 +55,7 @@ struct k_timer {int dummy;};
 #define K_TIMER_DEFINE(n,fn,stop) struct k_timer n
 #define K_THREAD_STACK_DEFINE(n,size) unsigned char n[size]
 #define K_THREAD_STACK_SIZEOF(n) sizeof(n)
-static int queued_samples;
+static int queued_samples, scheduled_delay_ms, scheduled_calls, cancelled_work;
 static struct k_work_q lowprio;
 static struct k_work_q *zmk_workqueue_lowprio_work_q(void) {return &lowprio;}
 static int k_work_submit_to_queue(struct k_work_q *q,struct k_work *w) {
@@ -50,7 +66,16 @@ static void k_work_queue_start(struct k_work_q *q,void *s,size_t n,int p,void *c
     (void)q;(void)s;(void)n;(void)p;(void)c;
 }
 static int k_work_reschedule_for_queue(struct k_work_q *q,struct k_work_delayable *w,int t) {
-    (void)q;(void)w;(void)t; return 0;
+    (void)w; scheduled_delay_ms=t; scheduled_calls++;
+    if(q==&lowprio && t==0) queued_samples++;
+    return 0;
+}
+static int k_work_schedule(struct k_work_delayable *w,int t) {
+    (void)w;scheduled_delay_ms=t;scheduled_calls++;return 0;
+}
+static int k_work_reschedule(struct k_work_delayable *w,int t) {return k_work_schedule(w,t);}
+static int k_work_cancel_delayable(struct k_work_delayable *w) {
+    (void)w;cancelled_work++;return 0;
 }
 typedef int atomic_t;
 static int atomic_get(atomic_t *p) {return *p;}
@@ -79,6 +104,18 @@ typedef struct {struct zmk_split_peripheral_status_changed link;} zmk_event_t;
 static const struct zmk_split_peripheral_status_changed *as_zmk_split_peripheral_status_changed(const zmk_event_t *e) {return &e->link;}
 static bool mock_link=true;
 static bool zmk_split_bt_peripheral_is_connected(void) {return mock_link;}
+static bool mock_bonded = true;
+static bool zmk_split_bt_peripheral_is_bonded(void) {return mock_bonded;}
+enum {led_status1=0,led_status2=1,led_status3=2};
+#define DT_ALIAS(x) x
+struct pwm_dt_spec {const struct device *dev;uint32_t period;int channel;};
+#define PWM_DT_SPEC_GET(x) {.dev=&mock_device,.period=20000000,.channel=(x)}
+static int pwm_calls;
+static uint32_t last_pulses[3];
+static int pwm_set_pulse_dt(const struct pwm_dt_spec *p,uint32_t pulse) {
+    assert(p->channel>=0 && p->channel<3 && pulse<=p->period);
+    pwm_calls++;last_pulses[p->channel]=pulse;return 0;
+}
 #define ZMK_EV_EVENT_BUBBLE 0
 #define ZMK_LISTENER(...)
 #define ZMK_SUBSCRIPTION(...)
