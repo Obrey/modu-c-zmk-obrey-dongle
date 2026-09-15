@@ -1,0 +1,2 @@
+/* Single source of truth: edit config/modu.keymap only. */
+#include "modu.keymap"

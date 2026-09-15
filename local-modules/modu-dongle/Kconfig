@@ -1,0 +1,30 @@
+# SPDX-License-Identifier: MIT
+menu "MODU-C dongle status additions"
+config MODU_PERIPHERAL_STATUS_LED
+    bool "Show the actual keyboard-to-dongle BLE link on the keyboard LED"
+    depends on ZMK_SPLIT && !ZMK_SPLIT_ROLE_CENTRAL && ZMK_SPLIT_BLE && PWM
+    default n
+
+config MODU_STATUS_LED_BRIGHTNESS
+    int "Connected/disconnected status LED brightness (percent)"
+    depends on MODU_PERIPHERAL_STATUS_LED
+    range 1 100
+    default 12
+
+config MODU_DONGLE_STATUS_SCREEN
+    bool "MODU-C Mac status screen"
+    depends on ZMK_DISPLAY && ZMK_SPLIT_ROLE_CENTRAL && ZMK_SPLIT_BLE
+    depends on ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING
+    select LV_USE_LABEL
+    select LV_FONT_MONTSERRAT_10
+    default n
+
+config MODU_DONGLE_HAS_BATTERY
+    bool "This dongle physically has a battery and a valid battery sensor"
+    depends on MODU_DONGLE_STATUS_SCREEN && ZMK_BATTERY_REPORTING
+    default n
+    help
+      Leave disabled for an ordinary USB-powered dongle. A battery percentage
+      read from an unconnected ADC is not a measurement of a real battery.
+      When enabled, use the board's zmk,battery sensor for the D row.
+endmenu

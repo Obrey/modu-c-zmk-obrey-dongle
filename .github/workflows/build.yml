@@ -6,6 +6,7 @@ name: Build MODU-C + Dongle
       - "config/**"
       - "local-modules/**"
       - "scripts/**"
+      - "tests/**"
       - "build.yaml"
       - ".github/workflows/build.yml"
       - "LICENSE*"
@@ -37,6 +38,8 @@ jobs:
         run: python3 scripts/selftest.py
       - name: Test boot keys, dongle routing, and all output names
         run: python3 scripts/test_full_config.py
+      - name: Native status logic and simulated UI tests (not firmware builds)
+        run: python3 scripts/test_status.py
 
   build:
     name: Build keyboard halves, dongle variants, and reset firmware
@@ -85,7 +88,11 @@ jobs:
           cp LICENSE NOTICE.md THIRD_PARTY_NOTICES.md uf2/
           cp -R LICENSES uf2/LICENSES
           cp docs/FLASHING_KO.md uf2/READ_BEFORE_FLASHING_KO.md
-          (cd uf2 && sha256sum *.uf2 > SHA256SUMS.txt)
+          # The three files at the top level are the normal OLED installation.
+          mkdir -p uf2/fallback uf2/reset
+          mv uf2/modu_dongle.uf2 uf2/fallback/
+          mv uf2/settings_reset_modu.uf2 uf2/settings_reset_dongle.uf2 uf2/reset/
+          (cd uf2 && find . -type f -name '*.uf2' -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS.txt)
       - uses: actions/upload-artifact@v7
         with:
           name: modu-c-dongle-firmware

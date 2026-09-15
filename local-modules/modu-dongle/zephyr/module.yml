@@ -1,4 +1,6 @@
 name: modu-dongle
 build:
+  cmake: .
+  kconfig: Kconfig
   settings:
     board_root: .

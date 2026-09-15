@@ -27,9 +27,19 @@ No trademark rights, patent rights, warranty, or endorsement are provided.
 
 This distribution additionally retains the supplied user-customized keymap, adds ordinary
 ZMK hold-tap boot-gate layers, replaces the old custom boot-combo dependency, and adds
-MODU-C peripheral overlays, a pure-device-tree dongle shield module, two dongle variants,
+MODU-C peripheral overlays, a dongle shield module, two dongle variants,
 board-specific reset builds, and updated packaging/host checks. It is not an EKS release.
 OLED wiring is adapted from the supplied Corne overlay, which carries
 Copyright (c) 2021 Darryl deHaan / SPDX-License-Identifier: MIT.
 The MODU matrix coordinates and original MODU material retain the EKS notice and license.
 No source or hardware test success beyond VALIDATION.md is claimed.
+
+## 2026-09-15 MAC v3 status additions
+
+The local module now adds a split-aware custom LVGL status screen, persistent
+left/right peer identification, generated-devicetree keymap guards, and a
+peripheral-role connection LED replacement. MAC is a fixed visual preference,
+not OS detection. The replacement LED file retains the EKS notice and license
+for vendor hardware mappings and polarity. Independent UI/helper/test code is
+marked MIT. Original notices remain in force. Native simulation is not a
+Zephyr/ARM build, physical display test, or manufacturer endorsement.

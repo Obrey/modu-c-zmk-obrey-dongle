@@ -1,0 +1,25 @@
+{
+  "basis": "modu-c-zmk-obrey-main.zip/config/modu.keymap",
+  "basis_sha256": "08c9abde6c20963c383450c6cd02a57ab63f981ce12d201c2fc7f4b89793cdef",
+  "canonical_sha256": "1690544cd320d7216727f1c5ca50aec82c572684b15e639293a656b11ecf9985",
+  "original_layers_preserved": 7,
+  "binding_changes_in_original_layers": [
+    {
+      "layer": 0,
+      "position": 5,
+      "original": "&kp N5",
+      "v3": "&blt5 L_BOOT_L N5"
+    },
+    {
+      "layer": 0,
+      "position": 6,
+      "original": "&kp N6",
+      "v3": "&blt6 L_BOOT_R N6"
+    }
+  ],
+  "added_layers": [
+    "Boot Left",
+    "Boot Right"
+  ],
+  "note": "This compares source bindings, not the UF2 currently flashed on the user devices."
+}

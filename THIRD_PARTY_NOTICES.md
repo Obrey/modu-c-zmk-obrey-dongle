@@ -72,3 +72,15 @@ wiring and panel settings were adapted into the new `modu_dongle_oled.overlay`; 
 original attribution is retained there. MIT text is in `LICENSES/MIT.txt`.
 The old Corne repository's DYA/runtime/settings/battery-history/display modules are
 not dependencies of this configuration.
+
+
+## MAC v3 custom status screen
+
+The new UI uses the pinned ZMK and LVGL APIs; a small monochrome Mac-style mark
+is encoded as original pixel rows and does not require redistributed font files.
+The MAC label is a user-selected visual label, not an Apple/EKS endorsement.
+The peripheral LED hardware channel order and inverted PWM follow the vendor
+implementation; its EKS attribution and non-commercial license are retained in
+the replacement source. Upstream Zephyr and LVGL are obtained by the pinned
+west manifest and keep their own notices. New host test doubles are not copies
+of the Zephyr or LVGL implementation and do not emulate physical hardware.

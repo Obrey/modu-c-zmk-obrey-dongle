@@ -1,75 +1,44 @@
-# Validation status — full dongle configuration
+# MAC v3 validation record — 2026-09-15
 
-Date: 2026-09-15. This is a source configuration, not a compiled firmware release.
+## What was executed
 
-## Battery-link fix in this revision
+- `python3 scripts/validate.py`: 67-position metadata, layer structure, source pins, build matrix, overlay/module paths and workflow/packaging contracts.
+- `python3 scripts/selftest.py`: Intel HEX normalization/corruption checks and UF2 packaging using deliberately synthetic fixtures, never distributable device firmware.
+- `python3 scripts/test_full_config.py`: 14 existing configuration/packaging regressions.
+- `python3 scripts/test_status.py`: 9 additional host tests, including:
+  - Pure C helper code compiled by native GCC and executed with assertions for key position -> side, address identity, persistence validation, LED phase/channel selection and unknown/0/100/invalid battery values.
+  - The actual `dongle_status.c` compiled and executed against test doubles of the relevant Zephyr/ZMK/LVGL API calls, with dongle-battery support both disabled and enabled.
+  - UI simulation covers reversed pairing order, separate host vs half connectivity, percentage values, disconnect/reconnect, stale/changed peers, layer changes, settings restoration, invalid settings, fixed object count across 1,000 updates, and widget bounding boxes in 128x64.
+  - Source checks cover mono/custom screen settings, actual split connection LED functions, no LVGL calls in event callbacks, canonical keymap wrappers, no Studio keymap overrides, and the battery event dependency fix.
+- YAML parsing of the manifest, module metadata, workflow and build matrix.
+- Release source keymap compared to the supplied custom keymap: all seven original layer binding arrays match except the requested 5/6 holdtap changes, plus two added boot layers. `KEYMAP_PROVENANCE.json` records the hashes and exact binding changes.
 
-The user supplied two failed ARM link logs, both reporting an undefined
-`raise_zmk_peripheral_battery_state_changed` reference from `src/split/central.c`.
-The previous source ZIP set `CONFIG_ZMK_BATTERY_REPORTING=n` while enabling
-`CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING=y` in both dongle variants.
+The executed results are in `docs/TEST_RESULTS.txt`. The native test API doubles are in `tests/`.
+They check C logic against the described API contracts; they are not the actual Zephyr or LVGL implementations.
 
-At pinned ZMK `641514a97db345f499dd50b0360e594270f008fe`,
-`app/CMakeLists.txt` includes `src/events/battery_state_changed.c` only when
-`CONFIG_ZMK_BATTERY_REPORTING` is enabled. That C file implements BOTH local
-and peripheral battery events. Enabling peripheral fetching without compiling
-that C file accounts for the undefined reference in the supplied logs.
+## What was NOT executed
 
-Both dongle `.conf` files now explicitly set `CONFIG_ZMK_BATTERY_REPORTING=y`.
-Peripheral fetching remains enabled. No ZMK version update, custom event stub,
-new C module, keymap change, or hardware-overlay change was made.
+- A real Zephyr/ZMK ARM compilation or linker invocation with the nRF52840 toolchain.
+- Generated Devicetree/Kconfig evaluation against the complete west dependency workspace.
+- A firmware run on the user's dongle, OLED, trackballs, battery sensors or LEDs.
+- A real Bluetooth battery event, persistent flash transaction, radio connection or host HID test.
+- A physical test of OLED memory use, latency, three-second boot gestures or power consumption.
 
-The added host-side regression test was first run against the unmodified
-configurations: it failed for BOTH dongle variants, as expected. After the two
-configuration edits, all 14 configuration tests passed. This validates the
-configuration guard, not an actual ARM compile/link. The previous tests were
-insufficient to catch this configuration dependency; their success did not
-establish that the firmware built.
+This working environment has no ZMK west workspace or ARM SDK. Its container network could not resolve
+the dependency host during an attempted retrieval; primary source headers were inspected with the web tool.
+There is no claim that the resulting six firmware targets already compile or work on hardware.
+GitHub Actions performs the actual firmware build on the user's commit. Only a successful run provides
+compiler/linker evidence; hardware behavior still requires a device test.
 
-## Executed locally
+## Prior user observation, not a test performed here
 
-- `python3 scripts/validate.py`: metadata consistency; 67 positions on all nine layers;
-  six target names; pinned direct revisions; quoted module/overlay paths; workflow hooks.
-- `python3 scripts/selftest.py`: original HEX normalization and UF2 structural validation,
-  missing/duplicate outputs, bad family/address/record cases, original conversion fixtures.
-- `python3 scripts/test_full_config.py`: 14 host-side/static tests for hold-tap settings,
-  boot confirmation positions, unchanged Game number keys, trackball IDs/listener configuration,
-  dongle matrix coordinates, OLED wiring, the pinned battery-event dependency,
-  and all six output names/packaging fixtures.
+The user reports that the previous headless dongle firmware accepts keyboard input. That narrows the
+problem and motivates preserving the working radio/matrix/trackball configuration, not resetting bonds.
+The earlier OLED failure and the reported different live keymap are not definitively diagnosed from
+that observation alone. MAC v3 adds isolated rendering/config corrections and visible build/layer identity
+rather than asserting an unverified single root cause.
 
-These tests inspect configuration and exercise Python packaging code. They do not execute
-ZMK hold-tap timing, Bluetooth behavior, bootloader entry, or display drivers.
-Synthetic UF2 test fixtures are created in temporary directories only and are NOT included
-in the delivered source archive. No compiled firmware has been supplied.
+## Rollback
 
-## Not executed
-
-- Full Zephyr/ARM compilation and linking of any target.
-- The GitHub Actions workflow on the user's repository.
-- MODU-C left/right physical key scanning and orientation selection.
-- Peripheral reconnection, dual-trackball movement, source-specific bootloader entry.
-- OLED initialization, alignment, or runtime status screen rendering.
-
-The local environment has no west/ARM SDK. A direct HTTPS source fetch from the
-container failed with a DNS-resolution error; the web tool was used for source inspection. The workflow performs the actual firmware builds in
-ZMK's official build container when run on GitHub.
-
-## Source checks consulted
-
-- https://zmk.dev/docs/hardware-integration/dongle
-- https://zmk.dev/docs/hardware-integration/pointing
-- https://zmk.dev/docs/keymaps/behaviors/hold-tap
-- https://zmk.dev/docs/keymaps/behaviors/reset
-- ZMK commit `641514a97db345f499dd50b0360e594270f008fe`:
-  `app/boards/nicekeyboards/nice_nano/board.yml`, `app/src/pointing/input_split.c`,
-  `app/src/split/bluetooth/Kconfig`, `app/src/display/Kconfig`,
-  `.github/workflows/build-user-config.yml`, `app/CMakeLists.txt`,
-  `app/src/events/battery_state_changed.c`, `app/src/split/central.c`, `app/Kconfig`.
-- MODU commit `bee0bb4b812f63f279eb67e928accc89600b5904`:
-  `modu-module/boards/shields/modu/{modu.dtsi,modu_left.overlay,modu_right.overlay,modu_left.conf,modu_right.conf}`.
-
-## Reproducibility boundary
-
-The two direct project commits are pinned. ZMK's transitive Zephyr branch and the official
-build container tag remain inherited from the supplied workflow/manifest and are not frozen
-by digest here. Static consistency is not a substitute for a successful build or a hardware test.
+Retain the previously working headless UF2. New build artifacts place the headless target under
+`fallback/`. Do not use `reset/` during the ordinary update of an already connected setup.
