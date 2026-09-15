@@ -110,6 +110,29 @@ class FullConfigTests(unittest.TestCase):
         self.assertIn('remote: zmkfirmware',west)
         self.assertNotIn('cormoran',west)
 
+    def test_dongle_battery_event_dependency_for_pinned_zmk(self):
+        # At ZMK 641514a, peripheral and local battery event implementations
+        # share src/events/battery_state_changed.c. app/CMakeLists.txt only
+        # includes that source under CONFIG_ZMK_BATTERY_REPORTING. Enabling
+        # fetching while disabling reporting leaves central.c with an
+        # undefined raise_zmk_peripheral_battery_state_changed reference.
+        # This is a source-configuration regression check, not a ZMK build.
+        for name in ['modu_dongle', 'modu_dongle_oled']:
+            with self.subTest(shield=name):
+                text = (SHIELD / f'{name}.conf').read_text()
+                for symbol in [
+                    'CONFIG_ZMK_BATTERY_REPORTING',
+                    'CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING',
+                ]:
+                    values = re.findall(
+                        rf'(?m)^\s*{re.escape(symbol)}\s*=\s*([^#\s]+)', text
+                    )
+                    self.assertEqual(values, ['y'],
+                        f'{name}: {symbol} must be enabled exactly once')
+                entry = next(e for e in _parse_build_entries(
+                    (ROOT / 'build.yaml').read_text()) if e['shield'] == name)
+                self.assertNotIn('-DCONFIG_ZMK_BATTERY_REPORTING=n', entry['cmake'])
+
     def test_packaging_names_equal_matrix_names(self):
         names=tuple(e['artifact'] for e in _parse_build_entries((ROOT/'build.yaml').read_text()))
         self.assertEqual(names, TARGETS)

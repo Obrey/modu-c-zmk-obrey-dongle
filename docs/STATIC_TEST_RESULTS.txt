@@ -1,15 +1,39 @@
-HOST/STATIC VALIDATION ONLY — NOT AN ARM/ZMK BUILD
+HOST/STATIC VALIDATION ONLY - NOT AN ARM/ZMK BUILD
+Battery fix revision: 2026-09-15.
 Synthetic UF2 fixtures are temporary and are not delivered.
+Before the fix, the new regression test rejected both original dongle configs.
+
+$ python3 scripts/validate.py
 OK: metadata matches the 67-position upstream default_transform.
 OK: every keymap layer has 67 bindings; default placeholders are at 51..56 only.
 OK: six build targets, pinned source revisions, overlay paths, and module paths are consistent.
 OK: deterministic HEX normalization, UF2 structural checks, and notices are wired in.
+
+$ python3 scripts/selftest.py
+Selected native UF2 for modu_left: /tmp/modu-c-selftest-6brds9_1/packaging/native-inputs/a/modu_left.uf2
+Selected native UF2 for modu_right: /tmp/modu-c-selftest-6brds9_1/packaging/native-inputs/b/modu_right.uf2
+Selected native UF2 for settings_reset: /tmp/modu-c-selftest-6brds9_1/packaging/native-inputs/c/settings_reset.uf2
+Verified modu_left.uf2: 2 blocks, sha256=2c767369a752388442ad648d4f36e28dcb9efcd24706e77fdf0ad05753258886
+Verified modu_right.uf2: 2 blocks, sha256=d6e6bd2119a3a18035d1519a641b8b9547439fd12d827abf24997ea6a8c24cea
+Verified settings_reset.uf2: 2 blocks, sha256=77d6db42e793258abf353e617bc3efe0b2a9c3368baba5d55e76b7ce2917addc
+Converting validated HEX for modu_left: /tmp/modu-c-selftest-6brds9_1/packaging/hex-inputs/modu_left.hex
+Converting validated HEX for modu_right: /tmp/modu-c-selftest-6brds9_1/packaging/hex-inputs/modu_right.hex
+Converting validated HEX for settings_reset: /tmp/modu-c-selftest-6brds9_1/packaging/hex-inputs/settings_reset.hex
+Verified modu_left.uf2: 2 blocks, sha256=0c096f4a00674b93864cc3fac9f91d1e6d4f1fc4e4b14e2dbf8a2fdb555236a2
+Verified modu_right.uf2: 2 blocks, sha256=1be298feec57cf234955db62d7aa21934ffd9241f84e00b5d913bf03656567d9
+Verified settings_reset.uf2: 2 blocks, sha256=fb8683206277eabb0a4b31fecb2174dc087424754bba1b2cde303a6b146ca309
+Selected native UF2 for modu_left: /tmp/modu-c-selftest-6brds9_1/packaging/identical/modu_left.uf2
+Selected native UF2 for modu_right: /tmp/modu-c-selftest-6brds9_1/packaging/identical/modu_right.uf2
+Selected native UF2 for settings_reset: /tmp/modu-c-selftest-6brds9_1/packaging/identical/settings_reset.uf2
 OK: HEX normalization rejects corruption and removes terminal blank lines.
 OK: UF2 magic, family ID, block tables, ranges, and address limits are enforced.
 OK: native/HEX packaging rejects missing, duplicate, and identical half outputs.
+
+$ python3 scripts/test_full_config.py
 test_all_six_native_uf2_outputs (__main__.FullConfigTests.test_all_six_native_uf2_outputs) ... ok
 test_boot_gate_and_confirm_positions (__main__.FullConfigTests.test_boot_gate_and_confirm_positions) ... ok
 test_central_connections_and_no_studio_fork (__main__.FullConfigTests.test_central_connections_and_no_studio_fork) ... ok
+test_dongle_battery_event_dependency_for_pinned_zmk (__main__.FullConfigTests.test_dongle_battery_event_dependency_for_pinned_zmk) ... ok
 test_dongle_receives_both_trackballs (__main__.FullConfigTests.test_dongle_receives_both_trackballs) ... ok
 test_dongle_transform_matches_keyboard_metadata (__main__.FullConfigTests.test_dongle_transform_matches_keyboard_metadata) ... ok
 test_hold_settings (__main__.FullConfigTests.test_hold_settings) ... ok
@@ -20,5 +44,20 @@ test_no_custom_boot_module_or_old_mouse_include (__main__.FullConfigTests.test_n
 test_oled_keeps_original_chip_and_pins (__main__.FullConfigTests.test_oled_keeps_original_chip_and_pins) ... ok
 test_packaging_names_equal_matrix_names (__main__.FullConfigTests.test_packaging_names_equal_matrix_names) ... ok
 test_right_forwards_trackball_on_id0_only (__main__.FullConfigTests.test_right_forwards_trackball_on_id0_only) ... ok
-Ran 13 tests in 0.008s
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.016s
+
 OK
+Selected native UF2 for modu_left: /tmp/tmpcjbj5tyw/inputs/modu_left.uf2
+Selected native UF2 for modu_right: /tmp/tmpcjbj5tyw/inputs/modu_right.uf2
+Selected native UF2 for modu_dongle: /tmp/tmpcjbj5tyw/inputs/modu_dongle.uf2
+Selected native UF2 for modu_dongle_oled: /tmp/tmpcjbj5tyw/inputs/modu_dongle_oled.uf2
+Selected native UF2 for settings_reset_modu: /tmp/tmpcjbj5tyw/inputs/settings_reset_modu.uf2
+Selected native UF2 for settings_reset_dongle: /tmp/tmpcjbj5tyw/inputs/settings_reset_dongle.uf2
+Verified modu_left.uf2: 2 blocks, sha256=2c767369a752388442ad648d4f36e28dcb9efcd24706e77fdf0ad05753258886
+Verified modu_right.uf2: 2 blocks, sha256=22d4ad65ed3d80b8d7a074dd3478064af5678e4d17a010c793721cd6dd832dd8
+Verified modu_dongle.uf2: 2 blocks, sha256=9112557d95ffc472b8117cb8bb37da9a7efc7c82a44e701ec31f2cc76f5cb42a
+Verified modu_dongle_oled.uf2: 2 blocks, sha256=472ebf3e2c017f71491ecc40877fe02b771623b3d56274c5108ebb759cff1c43
+Verified settings_reset_modu.uf2: 2 blocks, sha256=81e0425f1b4e794948b2e5ca7839c460d6b5a74df4dd88ddc0d4403f33e75d7f
+Verified settings_reset_dongle.uf2: 2 blocks, sha256=dcb49049308c8cd6d852180e4e429ca4303d07e1935a5f2fe15af29a6a04bac9
