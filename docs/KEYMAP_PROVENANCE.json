@@ -21,5 +21,6 @@
     "Boot Left",
     "Boot Right"
   ],
-  "note": "This compares source bindings, not the UF2 currently flashed on the user devices."
+  "note": "This compares source bindings, not the UF2 currently flashed on the user devices.",
+  "v4_note": "Canonical keymap byte-for-byte unchanged from v3; OLED-only change."
 }

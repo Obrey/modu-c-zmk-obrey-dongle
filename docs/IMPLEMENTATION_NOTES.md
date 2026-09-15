@@ -1,61 +1,78 @@
-# Implementation notes / upstream contracts
+# Implementation notes — v4
 
-Pinned ZMK: `641514a97db345f499dd50b0360e594270f008fe`.
-Pinned MODU-C firmware: `bee0bb4b812f63f279eb67e928accc89600b5904`.
-Do not update these pins without reviewing the adapter and rebuilding all targets.
+## Preserve the working input configuration
 
-## UI
+ZMK remains 641514a97db345f499dd50b0360e594270f008fe and MODU hardware remains
+bee0bb4b812f63f279eb67e928accc89600b5904. The keymap, build matrix, left/right
+overlays, LED driver and headless dongle configuration are unchanged from v3.
 
-The local Zephyr module defines `zmk_display_status_screen()` with LVGL 9 APIs and custom-screen Kconfig.
-All LVGL calls execute in the display work queue / LVGL timer context. Bluetooth callbacks and ZMK event
-listeners only inspect links, update short spinlock-protected records, or schedule settings writes.
-An OLED/I2C stall is separated from the system work queue, but hardware/driver failures are not impossible.
-The Mac mark is a visual preference, not host OS detection or a new modifier remapping layer.
+## Original, not re-drawn, display UI
 
-`peripheral_slot_index_for_conn()` is a GLOBAL function in the pinned ZMK
-`app/src/split/bluetooth/central.c`. It is not declared in a public header.
-This module declares that exact function to map real BLE connections to split source IDs.
-It neither patches upstream nor changes the split wire protocol. This is a source-version-specific adapter.
-`bt_conn_foreach()`/`bt_conn_get_info()` exclude host-role connections and disconnected entries.
-A radio connection indication is not a guarantee of every subsequent GATT/HID operation.
+The supplied Corne repository names englmaxi/zmk-dongle-display. v4 fetches that
+project via west and compiles its original custom_status_screen, output_status,
+modifiers and modifier symbols, layer_status, Bongo Cat and HID indicators.
+It does NOT compile the v3 standalone status screen or render an Apple mark.
+The original screen coordinates and modifier animation logic are retained.
+Only the small top-right battery widget implementation is replaced.
 
-Left/right labels are learned from MODU matrix positions and stored against the peer identity address,
-not the first/second pairing slot. The first normal key press on each half identifies it; address changes
-or settings reset require learning again. A saved mapping by itself does not imply an active connection.
+The old Corne's `v0.3` display branch is for LVGL 8. The existing working MODU ZMK
+pin uses LVGL 9, so this revision uses the display project's `main` branch as
+documented upstream. **This new display dependency is a floating ref**; the
+exact commit SHA is logged at configure time and written into
+`modu-display-revision.txt` in the build directory. The known core/board pins
+are unchanged. To fully freeze future reproductions, replace this main with
+the SHA from a successful build. No unverified commit SHA is invented here.
 
-Remote battery updates subscribe to `zmk_peripheral_battery_state_changed`, whose declaration is in
-`zmk/events/battery_state_changed.h`. Both variants KEEP `ZMK_BATTERY_REPORTING=y`: the pinned ZMK
-CMake uses that flag to include battery event implementations, including the peripheral event.
-Never infer connection state from percentage > 0. Missing, invalid, disconnected and measured 0% differ.
-Local dongle battery display is opt-in because a board battery ADC alone does not prove battery presence.
+We do not add the `dongle_display` shield, which would compile duplicate widget
+symbols. The existing modu_dongle_oled shield controls the upstream source list
+through original_display.cmake. The upstream module is a board_root-only west
+module, so being fetched does not enable its display on keyboard halves.
 
-## LEDs
+Narrow build-directory adaptations:
+- CONFIG_ZMK_BATTERY -> CONFIG_ZMK_BATTERY_REPORTING, the name on the pinned ZMK.
+- HID widget initialization handles the NULL event used by ZMK widget listeners.
+- The upstream battery implementation is not linked; our implementation uses
+  its unchanged `struct zmk_widget_dongle_battery_status` ABI.
 
-The original vendor left branch chooses host BLE profile status using SHIELD_MODU_LEFT, even if the
-left is converted to a peripheral. Disable that implementation for both halves. The replacement reads
-`zmk_split_bt_peripheral_is_connected/is_bonded` and preserves vendor inverted PWM and BGR/GBR wiring.
-This is not a charger-IC LED control or proof of the dongle's host link.
+No fetched project source is overwritten. Checks reject old LVGL-8 image
+formats and missing Mac modifier/battery APIs rather than silently falling back.
 
-## Keymap and build
+## Battery identity and sensor limitations
 
-The canonical file is `config/modu.keymap`. Explicit KEYMAP_FILE and include-only shield wrappers all
-point there. CMake hashes that file, and compilation asserts the generated Devicetree has the expected
-67 logical slots and side-specific boot holdtaps. The version tag and hash distinguish actual firmware.
-The hash is not cryptographic attestation of a device; it is a build identification aid. Provenance JSON
-is a release snapshot, not a lock against future keymap editing. Keymap settings storage is disabled
-without erasing Bluetooth settings.
+The event/peer backend is retained from v3: source index is NOT assumed to mean
+left or right. A physical key event identifies the side, mapped to the BLE peer
+address; the map is saved as `modu_status/peers`. v3's stored format is retained.
+The display uses three rows D, L, R (6 monospace characters maximum, width 56).
+Unknown data is --%; an identified disconnected side is OFF; zero is a valid
+percentage. A disconnected peer's cached value is invalidated.
+Callbacks use no LVGL API. A display timer updates existing labels at 500 ms.
 
-## Primary sources reviewed
+D reads the local ZMK battery event, not an invented capacity. It starts unknown
+until an event arrives. An ADC on a USB-only board is not proof a cell exists;
+MODU_DONGLE_HAS_BATTERY=n displays D USB or D EXT instead of a percentage.
 
+## White-screen remediation, not a claimed physical diagnosis
+
+v3 explicitly disabled the mono theme and rendered its own opposite-polarity
+screen/marks. v4 returns to the original screen's white logical background,
+black content and mono theme, preserving the supplied panel inversion setting.
+The SH1106 hardware configuration is otherwise retained at 128x64 logical pixels.
+VDB=100 + FULL_REFRESH uses an entire page-aligned frame; the pinned Zephyr
+allocates 1024 pixel bytes plus the 8-byte monochrome palette. A separate
+conversion buffer is enabled. Display work stays on a dedicated queue.
+
+These are source-level corrections. Neither an ARM build nor actual panel
+rendering was possible in this environment. Input success alone does not identify
+the reason a panel showed all white. Host tests do not validate I2C, LVGL rendering,
+upstream widget compilation, or physical hardware.
+
+## Sources consulted on 2026-09-15
+
+- https://raw.githubusercontent.com/englmaxi/zmk-dongle-display/main/README.md
+- https://raw.githubusercontent.com/englmaxi/zmk-dongle-display/main/boards/shields/dongle_display/custom_status_screen.c
+- https://raw.githubusercontent.com/englmaxi/zmk-dongle-display/main/boards/shields/dongle_display/widgets/modifiers.c
+- https://raw.githubusercontent.com/englmaxi/zmk-dongle-display/main/boards/shields/dongle_display/widgets/hid_indicators.c
+- https://raw.githubusercontent.com/englmaxi/zmk-dongle-display/main/boards/shields/dongle_display/widgets/battery_status.h
+- https://raw.githubusercontent.com/zmkfirmware/zmk/641514a97db345f499dd50b0360e594270f008fe/app/Kconfig
 - https://raw.githubusercontent.com/zmkfirmware/zmk/641514a97db345f499dd50b0360e594270f008fe/app/src/display/main.c
-- https://raw.githubusercontent.com/zmkfirmware/zmk/641514a97db345f499dd50b0360e594270f008fe/app/src/display/Kconfig
-- https://raw.githubusercontent.com/zmkfirmware/zmk/641514a97db345f499dd50b0360e594270f008fe/app/src/split/bluetooth/central.c
-- https://raw.githubusercontent.com/zmkfirmware/zmk/641514a97db345f499dd50b0360e594270f008fe/app/src/split/bluetooth/peripheral.c
-- https://raw.githubusercontent.com/zmkfirmware/zmk/641514a97db345f499dd50b0360e594270f008fe/app/include/zmk/events/battery_state_changed.h
-- https://raw.githubusercontent.com/zmkfirmware/zmk/641514a97db345f499dd50b0360e594270f008fe/app/include/zmk/endpoints.h
-- https://raw.githubusercontent.com/zmkfirmware/zmk/641514a97db345f499dd50b0360e594270f008fe/app/include/zmk/usb.h
-- https://raw.githubusercontent.com/zmkfirmware/zmk/641514a97db345f499dd50b0360e594270f008fe/app/include/zmk/keymap.h
-- https://raw.githubusercontent.com/zmkfirmware/zmk/641514a97db345f499dd50b0360e594270f008fe/app/boards/shields/corne/Kconfig.defconfig
-- https://raw.githubusercontent.com/22sh22/modu-c-firmware/bee0bb4b812f63f279eb67e928accc89600b5904/modu-module/src/led_breath/led_breath.c
-- https://raw.githubusercontent.com/zephyrproject-rtos/zephyr/v4.1.0/include/zephyr/bluetooth/conn.h
-- https://raw.githubusercontent.com/zmkfirmware/lvgl/f1db87ee98f1810328a8419572fa42a3b5f352ae/lv_version.h
+- https://raw.githubusercontent.com/zmkfirmware/zephyr/v4.1.0%2Bzmk-fixes/modules/lvgl/Kconfig.memory

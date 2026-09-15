@@ -12,19 +12,59 @@ config MODU_STATUS_LED_BRIGHTNESS
     default 12
 
 config MODU_DONGLE_STATUS_SCREEN
-    bool "MODU-C Mac status screen"
+    bool "Original Corne dongle display with Mac modifier symbols"
     depends on ZMK_DISPLAY && ZMK_SPLIT_ROLE_CENTRAL && ZMK_SPLIT_BLE
     depends on ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING
     select LV_USE_LABEL
-    select LV_FONT_MONTSERRAT_10
+    select LV_USE_IMAGE
+    select LV_USE_CANVAS
+    select LV_USE_ANIMIMG
+    select LV_USE_ANIMATION
+    select LV_USE_LINE
+    select LV_FONT_UNSCII_8
+    select ZMK_WPM
     default n
 
-config MODU_DONGLE_HAS_BATTERY
-    bool "This dongle physically has a battery and a valid battery sensor"
-    depends on MODU_DONGLE_STATUS_SCREEN && ZMK_BATTERY_REPORTING
+if MODU_DONGLE_STATUS_SCREEN
+
+# Same UI options as englmaxi/zmk-dongle-display. Its Kconfig declarations are
+# normally gated by SHIELD_DONGLE_DISPLAY; we compile its widgets in our shield
+# to apply narrow compatibility fixes without modifying the fetched project.
+config ZMK_DONGLE_DISPLAY_MAC_MODIFIERS
+    bool "Use Control / Option / Command / Shift symbols"
+    default y
+config ZMK_DONGLE_DISPLAY_DONGLE_BATTERY
+    bool "Include dongle battery row"
+    default y
+config ZMK_DONGLE_DISPLAY_MODIFIERS
+    bool "Display active modifier symbols"
+    default y
+config ZMK_DONGLE_DISPLAY_BONGO_CAT
+    bool "Keep original Bongo Cat widget"
+    default y
+config ZMK_DONGLE_DISPLAY_LAYER
+    bool "Display current layer"
+    default y
+config ZMK_DONGLE_DISPLAY_LAYER_NAME_SCROLL_WIDTH
+    int "Layer name width"
+    default 50
+config ZMK_DONGLE_DISPLAY_LAYER_TEXT_ALIGN
+    string "Layer name alignment"
+    default "left"
+config ZMK_DONGLE_DISPLAY_WPM
+    bool "Show WPM counter (original default is off)"
     default n
+config ZMK_DONGLE_DISPLAY_WPM_DISABLED_LAYERS
+    string "WPM excluded layers"
+    default ""
+
+config MODU_DONGLE_HAS_BATTERY
+    bool "Read dongle battery sensor for D row"
+    depends on ZMK_BATTERY_REPORTING && ZMK_DONGLE_DISPLAY_DONGLE_BATTERY
+    default y
     help
-      Leave disabled for an ordinary USB-powered dongle. A battery percentage
-      read from an unconnected ADC is not a measurement of a real battery.
-      When enabled, use the board's zmk,battery sensor for the D row.
+      Uses the board's zmk,battery sensor, not a fabricated percentage.
+      Only meaningful if a real battery is connected to a valid measurement
+      circuit. For a USB-only dongle set this to n; D then reads USB or EXT.
+endif
 endmenu

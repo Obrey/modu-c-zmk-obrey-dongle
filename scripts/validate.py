@@ -281,7 +281,7 @@ def main() -> None:
     check_build_files()
     print("OK: metadata matches the 67-position upstream default_transform.")
     print("OK: every keymap layer has 67 bindings; default placeholders are at 51..56 only.")
-    print("OK: six build targets, pinned source revisions, overlay paths, and module paths are consistent.")
+    print("OK: six build targets, pinned ZMK/MODU revisions, overlay paths, and module paths are consistent.")
     print("OK: deterministic HEX normalization, UF2 structural checks, and notices are wired in.")
 
 

@@ -16,6 +16,7 @@
 #define CONFIG_MODU_DONGLE_HAS_BATTERY 0
 #endif
 #define CONFIG_SETTINGS 1
+#define CONFIG_ZMK_DONGLE_DISPLAY_DONGLE_BATTERY 1
 #define MODU_CONFIG_KEYMAP_SHA256 "1690544cd320d7216727f1c5ca50aec82c572684b15e639293a656b11ecf9985"
 #define IS_ENABLED(x) (x)
 #define ARRAY_SIZE(x) (sizeof(x)/sizeof((x)[0]))
@@ -90,7 +91,7 @@ typedef struct { char text[64]; int x,y,w,h; } lv_obj_t;
 typedef struct { int unused; } lv_timer_t;
 static lv_obj_t mock_objects[96];
 static unsigned object_count;
-static int lv_font_montserrat_10;
+static int lv_font_unscii_8;
 #define LV_LABEL_LONG_CLIP 0
 #define LV_OPA_COVER 255
 #define LV_OBJ_FLAG_SCROLLABLE 1
@@ -109,3 +110,5 @@ static inline void lv_obj_set_style_bg_opa(lv_obj_t *p,int o,int s) { (void)p;(v
 static inline void lv_obj_remove_flag(lv_obj_t *p,int f) { (void)p;(void)f; }
 static inline void lv_label_set_text(lv_obj_t *p,const char *t) { snprintf(p->text,sizeof(p->text),"%s",t); }
 static inline lv_timer_t *lv_timer_create(void (*f)(lv_timer_t *),uint32_t ms,void *data) { (void)f;(void)ms;(void)data; static lv_timer_t timer; return &timer; }
+
+static inline void lv_obj_set_style_text_letter_space(lv_obj_t *p,int c,int s) { (void)p;(void)c;(void)s; }

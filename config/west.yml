@@ -5,6 +5,9 @@ manifest:
     - name: modu-c-upstream
       url-base: https://github.com/22sh22
 
+    - name: englmaxi
+      url-base: https://github.com/englmaxi
+
   projects:
     - name: zmk
       remote: zmkfirmware
@@ -15,6 +18,13 @@ manifest:
       remote: modu-c-upstream
       revision: bee0bb4b812f63f279eb67e928accc89600b5904
       path: modu-c-firmware
+
+    # Original dongle UI. main is the LVGL 9 branch (v0.3 is LVGL 8).
+    # The exact fetched revision is printed by original_display.cmake.
+    - name: zmk-dongle-display
+      remote: englmaxi
+      revision: main
+      path: zmk-dongle-display
 
   self:
     path: config

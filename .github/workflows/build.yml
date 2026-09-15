@@ -38,7 +38,7 @@ jobs:
         run: python3 scripts/selftest.py
       - name: Test boot keys, dongle routing, and all output names
         run: python3 scripts/test_full_config.py
-      - name: Native status logic and simulated UI tests (not firmware builds)
+      - name: Native battery logic and adapter tests (not OLED rendering tests)
         run: python3 scripts/test_status.py
 
   build:

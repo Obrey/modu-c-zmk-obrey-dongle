@@ -1,8 +1,8 @@
 /*
  * SPDX-License-Identifier: MIT
- * MODU-C MAC v3: split-aware SH1106 status screen for the pinned ZMK/LVGL 9.
+ * MODU-C v4: D/L/R battery widget inside the ORIGINAL Corne dongle UI.
  * No LVGL calls run in Bluetooth/event callbacks; the display queue owns UI.
- * The MAC mark is a fixed user-selected label, NOT automatic OS detection.
+ * Original layout, modifier symbols and connection widgets live upstream.
  */
 #include <errno.h>
 #include <zephyr/kernel.h>
@@ -14,10 +14,8 @@
 #include <zmk/event_manager.h>
 #include <zmk/events/battery_state_changed.h>
 #include <zmk/events/position_state_changed.h>
-#include <zmk/endpoints.h>
 #include <zmk/usb.h>
-#include <zmk/keymap.h>
-#include <zmk/display/status_screen.h>
+#include "battery_status.h"
 #include "status_logic.h"
 
 LOG_MODULE_REGISTER(modu_status, CONFIG_LOG_DEFAULT_LEVEL);
@@ -161,43 +159,22 @@ static void peer_disconnected(struct bt_conn *conn, uint8_t reason) {
 }
 BT_CONN_CB_DEFINE(modu_status_conn_callbacks) = {.disconnected = peer_disconnected};
 
-/* Fixed objects: refresh changes text only, without allocating new widgets. */
-static lv_obj_t *host_label, *half_labels[MODU_SIDES], *power_label, *layer_label;
-static lv_obj_t *make_label(lv_obj_t *parent, int x, int y, int width) {
+/* Fixed objects: only the existing top-right battery area is replaced. */
+static lv_obj_t *half_labels[MODU_SIDES], *power_label;
+static bool widget_initialized;
+static lv_obj_t *make_battery_label(lv_obj_t *parent, int y) {
     lv_obj_t *label = lv_label_create(parent);
+    if (!label) return NULL;
     lv_obj_remove_style_all(label);
-    lv_obj_set_style_text_font(label, &lv_font_montserrat_10, 0);
-    lv_obj_set_style_text_color(label, lv_color_white(), 0);
+    lv_obj_set_style_text_font(label, &lv_font_unscii_8, 0);
+    lv_obj_set_style_text_color(label, lv_color_black(), 0);
+    lv_obj_set_style_text_letter_space(label, 0, 0);
     lv_label_set_long_mode(label, LV_LABEL_LONG_CLIP);
-    lv_obj_set_pos(label, x, y);
-    lv_obj_set_size(label, width, 12);
+    lv_obj_set_pos(label, 0, y);
+    lv_obj_set_size(label, 56, 9);
     return label;
 }
-static void rect(lv_obj_t *parent, int x, int y, int w, int h) {
-    lv_obj_t *object = lv_obj_create(parent);
-    lv_obj_remove_style_all(object);
-    lv_obj_set_pos(object, x, y);
-    lv_obj_set_size(object, w, h);
-    lv_obj_set_style_bg_color(object, lv_color_white(), 0);
-    lv_obj_set_style_bg_opa(object, LV_OPA_COVER, 0);
-}
-static void make_mac_mark(lv_obj_t *parent) {
-    /* Original tiny monochrome bitten-fruit mark: no private-use font glyph
-     * or external icon/font file dependency. Each row is a 12-bit bitmap. */
-    static const uint16_t rows[] = {
-        0x030, 0x060, 0x040, 0x3BC, 0x7FE, 0xFFC,
-        0xFF8, 0xFF8, 0xFFC, 0x7FE, 0x7FE, 0x3FC, 0x198,
-    };
-    for (unsigned y = 0; y < ARRAY_SIZE(rows); y++) {
-        for (int x = 0; x < 12;) {
-            if (!(rows[y] & (1u << (11 - x)))) { x++; continue; }
-            int start = x;
-            while (x < 12 && (rows[y] & (1u << (11 - x)))) x++;
-            rect(parent, start, (int)y, x - start, 1);
-        }
-    }
-}
-static void refresh_screen(lv_timer_t *timer) {
+static void refresh_batteries(lv_timer_t *timer) {
     (void)timer;
     struct live_peer live[SOURCE_COUNT];
     struct battery_sample values[SOURCE_COUNT];
@@ -215,22 +192,16 @@ static void refresh_screen(lv_timer_t *timer) {
     uint8_t local_percent = dongle_battery_percent;
 #endif
     k_spin_unlock(&state_lock, key);
-    char text[40];
-    struct zmk_endpoint_instance endpoint = zmk_endpoint_get_selected();
-    bool host_connected = zmk_endpoint_is_connected();
-    switch (endpoint.transport) {
-    case ZMK_TRANSPORT_USB:
-        snprintf(text, sizeof(text), "USB %s", host_connected ? "ON" : "WAIT");
-        break;
-    case ZMK_TRANSPORT_BLE:
-        snprintf(text, sizeof(text), "BT%d %s", endpoint.ble.profile_index + 1,
-                 host_connected ? "ON" : "WAIT");
-        break;
-    default:
-        snprintf(text, sizeof(text), "NO HOST");
-        break;
+    char text[16];
+    if (power_label) {
+#if IS_ENABLED(CONFIG_MODU_DONGLE_HAS_BATTERY)
+        if (local_valid) snprintf(text, sizeof(text), "D %3u%%", (unsigned)local_percent);
+        else snprintf(text, sizeof(text), "D  --%%");
+#else
+        snprintf(text, sizeof(text), "D  %s", zmk_usb_is_powered() ? "USB" : "EXT");
+#endif
+        lv_label_set_text(power_label, text);
     }
-    lv_label_set_text(host_label, text);
     for (int side = 0; side < MODU_SIDES; side++) {
         int source = -1;
         for (int i = 0; i < SOURCE_COUNT; i++) {
@@ -239,49 +210,44 @@ static void refresh_screen(lv_timer_t *timer) {
                 break;
             }
         }
-        bool connected = source >= 0;
-        bool valid = connected && values[source].valid;
-        uint8_t percent = valid ? values[source].percent : 0;
-        modu_format_half(text, sizeof(text), side, ids.side[side].known, connected, valid, percent);
-        lv_label_set_text(half_labels[side], text);
+        char hand = side == 0 ? 'L' : 'R';
+        if (source < 0 && ids.side[side].known)
+            snprintf(text, sizeof(text), "%c OFF", hand);
+        else if (source < 0 || !values[source].valid)
+            snprintf(text, sizeof(text), "%c  --%%", hand);
+        else
+            snprintf(text, sizeof(text), "%c %3u%%", hand, (unsigned)values[source].percent);
+        if (half_labels[side]) lv_label_set_text(half_labels[side], text);
     }
-#if IS_ENABLED(CONFIG_MODU_DONGLE_HAS_BATTERY)
-    if (local_valid) snprintf(text, sizeof(text), "D: %3u%% %s", (unsigned)local_percent,
-                               zmk_usb_is_powered() ? "USB" : "BAT");
-    else snprintf(text, sizeof(text), "D:  --%% %s", zmk_usb_is_powered() ? "USB" : "BAT");
-#else
-    snprintf(text, sizeof(text), "D: %s", zmk_usb_is_powered() ? "USB POWER" : "EXT POWER");
-#endif
-    lv_label_set_text(power_label, text);
-    zmk_keymap_layer_index_t index = zmk_keymap_highest_layer_active();
-    zmk_keymap_layer_id_t id = zmk_keymap_layer_index_to_id(index);
-    const char *name = zmk_keymap_layer_name(id);
-    snprintf(text, sizeof(text), "%u %.11s", (unsigned)index, name ? name : "Layer");
-    lv_label_set_text(layer_label, text);
 }
-
-lv_obj_t *zmk_display_status_screen(void) {
-    lv_obj_t *screen = lv_obj_create(NULL);
-    lv_obj_remove_style_all(screen);
-    lv_obj_set_size(screen, 128, 64);
-    lv_obj_set_style_bg_color(screen, lv_color_black(), 0);
-    lv_obj_set_style_bg_opa(screen, LV_OPA_COVER, 0);
-    lv_obj_remove_flag(screen, LV_OBJ_FLAG_SCROLLABLE);
-    make_mac_mark(screen);
-    lv_obj_t *title = make_label(screen, 16, 1, 46);
-    lv_label_set_text(title, "MAC v3");
-    host_label = make_label(screen, 70, 1, 58);
-    rect(screen, 16, 13, 112, 1);
-    half_labels[0] = make_label(screen, 0, 16, 128);
-    half_labels[1] = make_label(screen, 0, 28, 128);
-    power_label = make_label(screen, 0, 40, 128);
-    layer_label = make_label(screen, 0, 52, 82);
-    lv_obj_t *fingerprint = make_label(screen, 87, 52, 41);
-    char short_hash[7];
-    snprintf(short_hash, sizeof(short_hash), "%.6s", MODU_CONFIG_KEYMAP_SHA256);
-    lv_label_set_text(fingerprint, short_hash);
-    refresh_screen(NULL);
-    lv_timer_t *refresh_timer = lv_timer_create(refresh_screen, 250, NULL);
-    if (!refresh_timer) LOG_ERR("Status refresh timer allocation failed");
-    return screen;
+int zmk_widget_dongle_battery_status_init(struct zmk_widget_dongle_battery_status *widget,
+                                         lv_obj_t *parent) {
+    if (widget_initialized) return -EALREADY;
+    widget->obj = lv_obj_create(parent);
+    if (!widget->obj) return -ENOMEM;
+    lv_obj_remove_style_all(widget->obj);
+    lv_obj_remove_flag(widget->obj, LV_OBJ_FLAG_SCROLLABLE);
+    /* The original status screen aligns this object TOP_RIGHT. */
+#if IS_ENABLED(CONFIG_ZMK_DONGLE_DISPLAY_DONGLE_BATTERY)
+    const int offset = 1;
+    power_label = make_battery_label(widget->obj, 0);
+    if (!power_label) return -ENOMEM;
+#else
+    const int offset = 0;
+#endif
+    lv_obj_set_size(widget->obj, 56, (MODU_SIDES + offset) * 10);
+    for (int side = 0; side < MODU_SIDES; side++) {
+        half_labels[side] = make_battery_label(widget->obj, (side + offset) * 10);
+        if (!half_labels[side]) return -ENOMEM;
+    }
+    widget_initialized = true;
+    refresh_batteries(NULL);
+    if (!lv_timer_create(refresh_batteries, 500, NULL)) {
+        LOG_ERR("Battery refresh timer allocation failed");
+        return -ENOMEM;
+    }
+    return 0;
+}
+lv_obj_t *zmk_widget_dongle_battery_status_obj(struct zmk_widget_dongle_battery_status *widget) {
+    return widget->obj;
 }

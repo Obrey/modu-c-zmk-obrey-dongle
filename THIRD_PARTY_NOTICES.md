@@ -84,3 +84,13 @@ implementation; its EKS attribution and non-commercial license are retained in
 the replacement source. Upstream Zephyr and LVGL are obtained by the pinned
 west manifest and keep their own notices. New host test doubles are not copies
 of the Zephyr or LVGL implementation and do not emulate physical hardware.
+
+
+## v4 original dongle UI dependency
+
+englmaxi/zmk-dongle-display, https://github.com/englmaxi/zmk-dongle-display,
+MIT (Copyright (c) 2024 The ZMK Contributors in the referenced widget files).
+Fetched through west; source assets and LICENSE remain with that upstream project.
+This archive does not redistribute its fonts or image assets. v4 builds the original
+layout/widgets with narrow generated-source compatibility adaptations. The local
+D/L/R battery widget retains v3's original peer-mapping logic.

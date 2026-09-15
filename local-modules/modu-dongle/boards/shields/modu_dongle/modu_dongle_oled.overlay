@@ -1,6 +1,6 @@
 /* OLED wiring from the supplied Corne dongle configuration.
  * Original overlay notice: Copyright (c) 2021 Darryl deHaan; MIT.
- * Unofficial adaptation: custom Mac status screen, not the DYA UI.
+ * Original dongle UI restored. 128 logical pixels (page-aligned for LVGL 9).
  */
 #include "modu-dongle-common.dtsi"
 #include <zephyr/dt-bindings/pinctrl/nrf-pinctrl.h>
