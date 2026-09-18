@@ -19,7 +19,6 @@
  * Board/trackball source revisions and metadata are retained from the ZIP.
  * Firmware build and physical tests are separate from source/host tests.
  */
-
 /* 2026-09-15 full dongle configuration.
  * The dongle executes this keymap; both MODU-C halves are peripherals.
  * Start on Base; release all keys, pause 300 ms, hold 5/6 alone for 3 seconds,
@@ -76,11 +75,13 @@
          * After 3000 ms alone, the momentary layer can activate normally.
          * Verified against the pinned ZMK source, not a physical firmware test.
          */
+
         blt5: boot_hold_left {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
             display-name = "5: tap number / hold 3s to arm left boot";
             bindings = <&mo>, <&kp>;
+
             tapping-term-ms = <3000>;
             flavor = "hold-preferred";
             hold-trigger-key-positions = <5>;
@@ -93,6 +94,7 @@
             #binding-cells = <2>;
             display-name = "6: tap number / hold 3s to arm right boot";
             bindings = <&mo>, <&kp>;
+
             tapping-term-ms = <3000>;
             flavor = "hold-preferred";
             hold-trigger-key-positions = <6>;
@@ -144,17 +146,17 @@
             layers = <L_BASE>;
         };
 
-        space_df {
+        caps_df {
             timeout-ms = <50>;
             key-positions = <27 28>;
-            bindings = <&kp SPACE>;
+            bindings = <&kp CAPS>;
             layers = <L_BASE>;
         };
 
-        caps_sd {
+        space_sd {
             timeout-ms = <50>;
             key-positions = <26 27>;
-            bindings = <&kp CAPSLOCK>;
+            bindings = <&kp SPACE>;
             layers = <L_BASE>;
         };
 
@@ -179,12 +181,12 @@
         default_layer {
             display-name = "Base";
             bindings = <
-&to L_GAME       &kp N1             &kp N2              &kp N3             &kp N4          &blt5 L_BOOT_L N5  &blt6 L_BOOT_R N6           &kp N7               &kp N8             &kp N9         &kp N0          &kp MINUS
-&kp TAB          &kp SLASH          &kp W               &kp E              &kp R           &kp T   &kp Y            &kp U                &kp I              &kp O          &kp SEMICOLON   &kp EQUAL
-&mt LG(A) LG(Z)  &hm250 LCTRL A     &hm200 LALT S       &hm200 LEFT_GUI D  &hm200 LSHFT F  &kp G   &kp H            &hm200 LSHFT J       &hm200 LEFT_GUI K  &hm200 LALT L  &hm250 LCTRL P  &kp APOS
-&mt LG(X) LG(C)  &kp Z              &kp X               &kp C              &kp V           &kp Q   &kp N            &kp M                &kp B              &kp COMMA      &kp PERIOD      &kp BSLH
-&kp LG(V)        &kp LBKT           &kp RBKT            &none              &none           &none   &none            &none                &none              &kp GRAVE      &mkp LCLK       &mkp RCLK
-&lt L_FN ESC     &lt L_MOUSE SPACE  &lt L_NAV CAPSLOCK                                             &lt L_SYM ENTER  &lt L_NUM BACKSPACE  &kp DEL            &trans
+&to L_GAME       &kp N1             &kp N2              &kp N3             &kp N4          &blt5 L_BOOT_L N5  &blt6 L_BOOT_R N6  &kp N7               &kp N8             &kp N9         &kp N0          &kp MINUS
+&kp TAB          &kp SLASH          &kp W               &kp E              &kp R           &kp T              &kp Y              &kp U                &kp I              &kp O          &kp SEMICOLON   &kp EQUAL
+&mt LG(A) LG(Z)  &hm250 LCTRL A     &hm200 LALT S       &hm200 LEFT_GUI D  &hm200 LSHFT F  &kp G              &kp H              &hm200 LSHFT J       &hm200 LEFT_GUI K  &hm200 LALT L  &hm250 LCTRL P  &kp APOS
+&mt LG(X) LG(C)  &kp Z              &kp X               &kp C              &kp V           &kp Q              &kp N              &kp M                &kp B              &kp COMMA      &kp PERIOD      &kp BSLH
+&kp LG(V)        &kp LBKT           &kp RBKT            &none              &none           &none              &none              &none                &none              &kp GRAVE      &mkp LCLK       &mkp RCLK
+&lt L_FN ESC     &lt L_MOUSE SPACE  &lt L_NAV CAPSLOCK                                                        &lt L_SYM ENTER    &lt L_NUM BACKSPACE  &kp DEL            &trans
             >;
         };
 
@@ -272,32 +274,34 @@
 &trans     &trans     &trans                                     &trans  &trans  &trans  &none
             >;
         };
-    
+
         // Boot Left: only the corresponding physical key can request bootloader.
         // Transparent entries preserve ordinary keys; releasing 5/6 exits.
+
         boot_left_layer {
             display-name = "Boot Left";
             bindings = <
-                &trans       &bootloader  &trans       &trans       &trans       &trans       &kp N6       &trans       &trans       &trans       &trans       &trans
-                &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans
-                &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans
-                &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans
-                &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans
-                &trans       &trans       &trans       &trans       &trans       &trans       &trans
+&trans  &bootloader  &trans  &trans  &trans  &trans  &kp N6  &trans  &trans  &trans  &trans  &trans
+&trans  &trans       &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans       &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans       &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans       &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans       &trans                          &trans  &trans  &trans  &trans
             >;
         };
 
         // Boot Right: only the corresponding physical key can request bootloader.
         // Transparent entries preserve ordinary keys; releasing 5/6 exits.
+
         boot_right_layer {
             display-name = "Boot Right";
             bindings = <
-                &trans       &trans       &trans       &trans       &trans       &kp N5       &trans       &trans       &trans       &trans       &bootloader  &trans
-                &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans
-                &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans
-                &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans
-                &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans       &trans
-                &trans       &trans       &trans       &trans       &trans       &trans       &trans
+&trans  &trans  &trans  &trans  &trans  &kp N5  &trans  &trans  &trans  &trans  &bootloader  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans       &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans       &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans       &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans       &trans
+&trans  &trans  &trans                          &trans  &trans  &trans  &trans
             >;
         };
     };
