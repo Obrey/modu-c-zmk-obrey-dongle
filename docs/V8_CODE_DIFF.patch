@@ -1,0 +1,156 @@
+--- v7/.github/workflows/build.yml
++++ v8/.github/workflows/build.yml
+@@ -44,6 +44,8 @@
+         run: python3 scripts/test_battery_telemetry.py
+       - name: Connected standby, LED and battery interval regression checks
+         run: python3 scripts/test_power.py
++      - name: Observed voltage range display and compatibility (not battery calibration)
++        run: python3 scripts/test_battery_range.py
+ 
+   build:
+     name: Build keyboard halves, dongle variants, and reset firmware
+--- v7/local-modules/modu-dongle/Kconfig
++++ v8/local-modules/modu-dongle/Kconfig
+@@ -98,4 +98,34 @@
+     help
+       Keep a sparse measurement while idle, including during charging.
+       GATT reads return cached samples and do not force idle ADC sampling.
++
++config MODU_BATTERY_RANGE_DISPLAY
++    bool "Display observed L/R voltage range index (NOT calibrated battery capacity)"
++    depends on MODU_DONGLE_STATUS_SCREEN && MODU_BATTERY_TELEMETRY_CENTRAL
++    default n
++    help
++      Display-only linear normalization of raw voltage telemetry into 0..100.
++      Every number is marked '*' to distinguish it from actual state of charge.
++      The endpoints are observed sensor values, not verified empty/full values.
++      Does not change ADC readings, sensor conversion, BAS, pairing or charging.
++      Power-supply changes can move this index without a capacity change.
++
++if MODU_BATTERY_RANGE_DISPLAY
++config MODU_BATTERY_RANGE_LEFT_MIN_MV
++    int "Left observed range minimum (mV, not battery cutoff)"
++    range 2500 4499
++    default 2900
++config MODU_BATTERY_RANGE_LEFT_MAX_MV
++    int "Left observed range maximum (mV, not full-charge voltage)"
++    range 2501 4500
++    default 3400
++config MODU_BATTERY_RANGE_RIGHT_MIN_MV
++    int "Right observed range minimum (mV, not battery cutoff)"
++    range 2500 4499
++    default 2900
++config MODU_BATTERY_RANGE_RIGHT_MAX_MV
++    int "Right observed range maximum (mV, not full-charge voltage)"
++    range 2501 4500
++    default 3400
++endif
+ endmenu
+--- v7/local-modules/modu-dongle/boards/shields/modu_dongle/modu_dongle_oled.conf
++++ v8/local-modules/modu-dongle/boards/shields/modu_dongle/modu_dongle_oled.conf
+@@ -65,3 +65,12 @@
+ 
+ # v6: verified L/R samples + voltage + sensor status, not BAS zero alone.
+ CONFIG_MODU_BATTERY_TELEMETRY_CENTRAL=y
++
++# v8: DISPLAY ONLY. User-observed 2.90..3.40V is an unverified range,
++# NOT measured empty/full capacity. '*' marks each normalized L/R number.
++# Leave raw voltage, BAS reports, dongle D row and all power settings intact.
++CONFIG_MODU_BATTERY_RANGE_DISPLAY=y
++CONFIG_MODU_BATTERY_RANGE_LEFT_MIN_MV=2900
++CONFIG_MODU_BATTERY_RANGE_LEFT_MAX_MV=3400
++CONFIG_MODU_BATTERY_RANGE_RIGHT_MIN_MV=2900
++CONFIG_MODU_BATTERY_RANGE_RIGHT_MAX_MV=3400
+--- v7/local-modules/modu-dongle/src/battery_range_display.h
++++ v8/local-modules/modu-dongle/src/battery_range_display.h
+@@ -0,0 +1,55 @@
++/* SPDX-License-Identifier: MIT
++ * Optional DISPLAY-ONLY normalization of an observed ADC/sensor range.
++ * This is NOT calibrated battery state of charge. The observed endpoints are
++ * NOT verified empty/full battery voltages. Every normalized number is marked
++ * '*'. Raw telemetry, standard BAS reports and protection behavior are untouched.
++ */
++#pragma once
++#include <stdbool.h>
++#include <stddef.h>
++#include <stdint.h>
++#include <stdio.h>
++#include "battery_telemetry_protocol.h"
++
++struct modu_battery_range {
++    uint16_t min_mv; /* Lower observed sensor reading; NOT cutoff voltage. */
++    uint16_t max_mv; /* Upper observed sensor reading; NOT charge termination. */
++};
++
++static inline bool modu_battery_range_percent(uint16_t mv,
++                                             const struct modu_battery_range *range,
++                                             uint8_t *out) {
++    if (!range || !out || range->max_mv <= range->min_mv) return false;
++    if (mv <= range->min_mv) { *out = 0; return true; }
++    if (mv >= range->max_mv) { *out = 100; return true; }
++    const uint32_t span = (uint32_t)range->max_mv - range->min_mv;
++    /* Nearest whole percent, with 32-bit arithmetic even on small targets. */
++    *out = (uint8_t)((((uint32_t)mv - range->min_mv) * 100u + span / 2u) / span);
++    return true;
++}
++
++static inline void modu_battery_format_range(char *text, size_t capacity, char hand,
++                                             const struct modu_battery_detail *d,
++                                             bool voltage_phase,
++                                             const struct modu_battery_range *range) {
++    /* Keep the original raw voltage, no-data, error and stale display paths.
++     * Only a fresh, successful, plausible measurement may be normalized.
++     * No BAS fallback: a BAS percentage alone has no voltage to normalize.
++     */
++    const bool idle = d && (d->flags & MODU_BATTERY_FLAG_IDLE);
++    const unsigned stale_after = idle ? MODU_BATTERY_IDLE_STALE_SECONDS :
++                                       MODU_BATTERY_STALE_SECONDS;
++    uint8_t relative;
++    if (!voltage_phase && d && d->result == MODU_BAT_OK &&
++        d->age_seconds <= stale_after && d->millivolts >= 2500 &&
++        d->millivolts <= 4500 &&
++        modu_battery_range_percent(d->millivolts, range, &relative)) {
++        /* Six characters active, seven idle: retain the original 56px area.
++         * '*' always means uncalibrated range index. '~' still means idle cache.
++         */
++        if (idle) snprintf(text, capacity, "%c*~%3u%%", hand, (unsigned)relative);
++        else snprintf(text, capacity, "%c*%3u%%", hand, (unsigned)relative);
++        return;
++    }
++    modu_battery_format(text, capacity, hand, d, voltage_phase);
++}
+--- v7/local-modules/modu-dongle/src/dongle_status.c
++++ v8/local-modules/modu-dongle/src/dongle_status.c
+@@ -18,6 +18,17 @@
+ #include "battery_status.h"
+ #include "status_logic.h"
+ #include "battery_telemetry.h"
++#if IS_ENABLED(CONFIG_MODU_BATTERY_RANGE_DISPLAY)
++#include "battery_range_display.h"
++BUILD_ASSERT(CONFIG_MODU_BATTERY_RANGE_LEFT_MAX_MV > CONFIG_MODU_BATTERY_RANGE_LEFT_MIN_MV,
++             "Left observed battery range must have max > min");
++BUILD_ASSERT(CONFIG_MODU_BATTERY_RANGE_RIGHT_MAX_MV > CONFIG_MODU_BATTERY_RANGE_RIGHT_MIN_MV,
++             "Right observed battery range must have max > min");
++static const struct modu_battery_range display_ranges[2] = {
++    {CONFIG_MODU_BATTERY_RANGE_LEFT_MIN_MV, CONFIG_MODU_BATTERY_RANGE_LEFT_MAX_MV},
++    {CONFIG_MODU_BATTERY_RANGE_RIGHT_MIN_MV, CONFIG_MODU_BATTERY_RANGE_RIGHT_MAX_MV},
++};
++#endif
+ 
+ LOG_MODULE_REGISTER(modu_status, CONFIG_LOG_DEFAULT_LEVEL);
+ #define SOURCE_COUNT CONFIG_ZMK_SPLIT_BLE_CENTRAL_PERIPHERALS
+@@ -238,8 +249,14 @@
+         else {
+             struct modu_battery_detail d;
+             bool have_detail = source >= 0 && modu_battery_detail_for_peer(live[source].peer, &d);
++#if IS_ENABLED(CONFIG_MODU_BATTERY_RANGE_DISPLAY)
++            modu_battery_format_range(text, sizeof(text), hand, have_detail ? &d : NULL,
++                                      ((k_uptime_get() / 3000) % 2) != 0,
++                                      &display_ranges[side]);
++#else
+             modu_battery_format(text, sizeof(text), hand, have_detail ? &d : NULL,
+                                 ((k_uptime_get() / 3000) % 2) != 0);
++#endif
+         }
+ #else
+         else if (source < 0 || !values[source].valid)

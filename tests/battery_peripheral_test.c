@@ -35,6 +35,8 @@ int main(void) {
     mock_activity=ZMK_ACTIVITY_ACTIVE;activity_event(NULL);assert(queued_samples==n+1);
     read_detail(NULL,NULL,packet,MODU_BATTERY_PACKET_SIZE,0);modu_battery_decode(packet,MODU_BATTERY_PACKET_SIZE,&d);
     assert(d.flags==0);
+    mock_usb_powered=true;read_detail(NULL,NULL,packet,MODU_BATTERY_PACKET_SIZE,0);modu_battery_decode(packet,MODU_BATTERY_PACKET_SIZE,&d);
+    assert((d.flags & MODU_BATTERY_FLAG_USB_POWERED) != 0);mock_usb_powered=false;
     mock_activity=ZMK_ACTIVITY_SLEEP;activity_event(NULL);
     n=fetch_calls;sample_work_fn(NULL);assert(fetch_calls==n && cancelled_work>0);
     puts("PASS: peripheral active/idle/wake/disconnect sample intervals and cached reads (mock sensor and BLE)");return 0;

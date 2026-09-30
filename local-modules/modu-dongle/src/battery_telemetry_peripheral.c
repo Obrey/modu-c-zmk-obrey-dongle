@@ -19,6 +19,7 @@
 #include <zmk/events/activity_state_changed.h>
 #include <zmk/events/split_peripheral_status_changed.h>
 #include <zmk/split/bluetooth/peripheral.h>
+#include <zmk/usb.h>
 #include "battery_telemetry_protocol.h"
 
 LOG_MODULE_REGISTER(modu_battery_sensor, CONFIG_LOG_DEFAULT_LEVEL);
@@ -104,6 +105,7 @@ static ssize_t read_detail(struct bt_conn *conn, const struct bt_gatt_attr *attr
     k_spin_unlock(&detail_lock, key);
     bool active = zmk_activity_get_state() == ZMK_ACTIVITY_ACTIVE;
     snapshot.flags = active ? 0 : MODU_BATTERY_FLAG_IDLE;
+    if (zmk_usb_is_powered()) snapshot.flags |= MODU_BATTERY_FLAG_USB_POWERED;
     if (snapshot.result == MODU_BAT_WAIT ||
         (active && snapshot.age_seconds >= CONFIG_MODU_BATTERY_ACTIVE_INTERVAL)) queue_sample();
     uint8_t packet[MODU_BATTERY_PACKET_SIZE];

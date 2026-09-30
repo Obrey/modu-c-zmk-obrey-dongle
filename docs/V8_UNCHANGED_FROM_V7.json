@@ -1,0 +1,17 @@
+{
+  "config/modu.keymap": "1690544cd320d7216727f1c5ca50aec82c572684b15e639293a656b11ecf9985",
+  "config/modu_dongle.keymap": "7d70118711e09a0386ae7bd931e9a260ab39bd72e4d10218128a6d339ab739a9",
+  "config/modu_dongle_oled.keymap": "7d70118711e09a0386ae7bd931e9a260ab39bd72e4d10218128a6d339ab739a9",
+  "config/west.yml": "5661d102bfbea6ead6495083270ab9b86819d1cebff478df349b7dc2b849400f",
+  "build.yaml": "c2ec80dcbc30df196c460c547a5fb317172de1615015f868ff73b4ebbe1536a4",
+  "config/dongle/modu_left.overlay": "476eb82cdd0f7986ecbb8a1b4391284a4fb1bc4289fa61b03cf56e67965ca456",
+  "config/dongle/modu_right.overlay": "731197bbd7d888964bd95a59bc505370a73a8540f939c171d2837acef2fad3f4",
+  "config/dongle/peripheral-power.conf": "885134a9715f7b3b4cd461e0a4defda6bf582ac0f6cce33c4f566d09b4ba8209",
+  "local-modules/modu-dongle/src/battery_telemetry_protocol.h": "3112ecde2291b8176c17faf076674a85cfc5bd92120515b2c694896700b44500",
+  "local-modules/modu-dongle/src/battery_telemetry_peripheral.c": "912d91c91ea14c04417d8284756582626abb9e88eaf9e2f19c6e6994b91b732f",
+  "local-modules/modu-dongle/src/battery_telemetry_central.c": "df5d33732b565be36dee5f7217b92e9e1f84e4b873577081b7f9321b2854a810",
+  "local-modules/modu-dongle/src/peripheral_status_led.c": "f0caf990fea27856ff738dba79184c69b990e8077a44d0a1fec24bb5bdeb3306",
+  "local-modules/modu-dongle/original_display.cmake": "8dcb37722186d656bd2ef3e9a52716b319d18d157116c0f019e301de86e1a98b",
+  "local-modules/modu-dongle/boards/shields/modu_dongle/modu_dongle_oled.overlay": "306ad86dbffa19d213e77a8edb6ca043f37e3506fdac35e96074e8e8b0d87c41",
+  "local-modules/modu-dongle/boards/shields/modu_dongle/modu_dongle.conf": "dd51f5c4e1e7a48aec00ba009987092c5719f4ba0767d9c35809eb479dbf5850"
+}

@@ -106,6 +106,9 @@ static bool mock_link=true;
 static bool zmk_split_bt_peripheral_is_connected(void) {return mock_link;}
 static bool mock_bonded = true;
 static bool zmk_split_bt_peripheral_is_bonded(void) {return mock_bonded;}
+
+static bool mock_usb_powered;
+static bool zmk_usb_is_powered(void) { return mock_usb_powered; }
 enum {led_status1=0,led_status2=1,led_status3=2};
 #define DT_ALIAS(x) x
 struct pwm_dt_spec {const struct device *dev;uint32_t period;int channel;};

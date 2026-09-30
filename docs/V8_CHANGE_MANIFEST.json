@@ -1,0 +1,77 @@
+[
+  {
+    "path": ".github/workflows/build.yml",
+    "status": "modified",
+    "sha256": "13916d9a377b076781bb6dd1fa4776716cc56a030938b29fd2ace8c55e759923"
+  },
+  {
+    "path": "README.md",
+    "status": "modified",
+    "sha256": "b66a894f8afc40576110f1dc7e2e07cb453eea5511cfb2296914452e610ead37"
+  },
+  {
+    "path": "VALIDATION.md",
+    "status": "modified",
+    "sha256": "ee7b8d70565e8f33e236c618e733ee89e6d8decbf5fe0c4b03c4e758955748cc"
+  },
+  {
+    "path": "docs/FLASHING_KO.md",
+    "status": "modified",
+    "sha256": "dbabcfcd746f56ee1c489ac450d5b6560edaf70e48c1efb8ac475d53833b6ab1"
+  },
+  {
+    "path": "docs/TEST_RESULTS.txt",
+    "status": "modified",
+    "sha256": "bbe9eee9bd33e60ce356923ca99d5b21c79b832675f499966e96edf43bc0c1bc"
+  },
+  {
+    "path": "docs/V8_CODE_DIFF.patch",
+    "status": "added",
+    "sha256": "61f4c712a86b9e867373d2e6e6a9d5e635cca621053a35467dc5ea9cadb616c5"
+  },
+  {
+    "path": "docs/V8_RANGE_DISPLAY_KO.md",
+    "status": "added",
+    "sha256": "a7bc0742c64d25c93fb81049fb668d9249438ff170b364e4af12df47da18f24d"
+  },
+  {
+    "path": "docs/V8_UNCHANGED_FROM_V7.json",
+    "status": "added",
+    "sha256": "79a8324ae488486c15dae475c7886bdad1ade6bab10c73073917244352520c76"
+  },
+  {
+    "path": "local-modules/modu-dongle/Kconfig",
+    "status": "modified",
+    "sha256": "60c7e2d9148bbd61a518923f2928bcf44d419b61c35a5d5f71515ee6e5356115"
+  },
+  {
+    "path": "local-modules/modu-dongle/boards/shields/modu_dongle/modu_dongle_oled.conf",
+    "status": "modified",
+    "sha256": "7071eca5907753061be6dcb7b0931ad082d34b522f7ef4fdf930ee59ade34195"
+  },
+  {
+    "path": "local-modules/modu-dongle/src/battery_range_display.h",
+    "status": "added",
+    "sha256": "05a2760b9d6aec17e955abf7ca5bfc9c1ab7f36faecfbcbf466d2e8edf352046"
+  },
+  {
+    "path": "local-modules/modu-dongle/src/dongle_status.c",
+    "status": "modified",
+    "sha256": "379684a40061b6647a927bebfcf56ab77590404d44de854dcc8d6376af62cf9c"
+  },
+  {
+    "path": "scripts/test_battery_range.py",
+    "status": "added",
+    "sha256": "7ec65290757ae41bf11694763920e16c8f07451e0f792e5d5b519c4e4934f568"
+  },
+  {
+    "path": "tests/battery_range_test.c",
+    "status": "added",
+    "sha256": "14ddb0b0f86015df7abf282e69636e2d720c53c6c365eabfdf8e896b92e4dd11"
+  },
+  {
+    "path": "tests/battery_range_ui_test.c",
+    "status": "added",
+    "sha256": "bb96b23924ab5f9dbcb852bed0d169196137ceb8d11611229447ba63cdf4d72b"
+  }
+]

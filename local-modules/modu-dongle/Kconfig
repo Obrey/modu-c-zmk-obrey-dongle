@@ -98,4 +98,33 @@ config MODU_BATTERY_IDLE_INTERVAL
     help
       Keep a sparse measurement while idle, including during charging.
       GATT reads return cached samples and do not force idle ADC sampling.
+
+config MODU_BATTERY_RANGE_DISPLAY
+    bool "Display empirical MODU-C L/R battery gauge"
+    depends on MODU_DONGLE_STATUS_SCREEN && MODU_BATTERY_TELEMETRY_CENTRAL
+    default n
+    help
+      Display-only empirical gauge based on observed MODU-C wireless-use readings.
+      USB-powered halves show CHG and are excluded from discharge percentage.
+      Does not change ADC readings, sensor conversion, BAS, pairing or charging.
+      This is a practical relative gauge, not laboratory state-of-charge.
+
+if MODU_BATTERY_RANGE_DISPLAY
+config MODU_BATTERY_RANGE_LEFT_MIN_MV
+    int "Left empirical near-shutdown reading (mV)"
+    range 1000 4499
+    default 1750
+config MODU_BATTERY_RANGE_LEFT_MAX_MV
+    int "Left empirical unplugged-full reading (mV)"
+    range 1001 4500
+    default 2950
+config MODU_BATTERY_RANGE_RIGHT_MIN_MV
+    int "Right empirical near-shutdown reading (mV)"
+    range 1000 4499
+    default 1750
+config MODU_BATTERY_RANGE_RIGHT_MAX_MV
+    int "Right empirical unplugged-full reading (mV)"
+    range 1001 4500
+    default 2950
+endif
 endmenu

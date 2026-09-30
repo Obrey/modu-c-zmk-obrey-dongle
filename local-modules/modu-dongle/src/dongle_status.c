@@ -18,6 +18,17 @@
 #include "battery_status.h"
 #include "status_logic.h"
 #include "battery_telemetry.h"
+#if IS_ENABLED(CONFIG_MODU_BATTERY_RANGE_DISPLAY)
+#include "battery_range_display.h"
+BUILD_ASSERT(CONFIG_MODU_BATTERY_RANGE_LEFT_MAX_MV > CONFIG_MODU_BATTERY_RANGE_LEFT_MIN_MV,
+             "Left observed battery range must have max > min");
+BUILD_ASSERT(CONFIG_MODU_BATTERY_RANGE_RIGHT_MAX_MV > CONFIG_MODU_BATTERY_RANGE_RIGHT_MIN_MV,
+             "Right observed battery range must have max > min");
+static const struct modu_battery_range display_ranges[2] = {
+    {CONFIG_MODU_BATTERY_RANGE_LEFT_MIN_MV, CONFIG_MODU_BATTERY_RANGE_LEFT_MAX_MV},
+    {CONFIG_MODU_BATTERY_RANGE_RIGHT_MIN_MV, CONFIG_MODU_BATTERY_RANGE_RIGHT_MAX_MV},
+};
+#endif
 
 LOG_MODULE_REGISTER(modu_status, CONFIG_LOG_DEFAULT_LEVEL);
 #define SOURCE_COUNT CONFIG_ZMK_SPLIT_BLE_CENTRAL_PERIPHERALS
@@ -238,8 +249,14 @@ static void refresh_batteries(lv_timer_t *timer) {
         else {
             struct modu_battery_detail d;
             bool have_detail = source >= 0 && modu_battery_detail_for_peer(live[source].peer, &d);
+#if IS_ENABLED(CONFIG_MODU_BATTERY_RANGE_DISPLAY)
+            modu_battery_format_range(text, sizeof(text), hand, have_detail ? &d : NULL,
+                                      ((k_uptime_get() / 3000) % 2) != 0,
+                                      &display_ranges[side]);
+#else
             modu_battery_format(text, sizeof(text), hand, have_detail ? &d : NULL,
                                 ((k_uptime_get() / 3000) % 2) != 0);
+#endif
         }
 #else
         else if (source < 0 || !values[source].valid)

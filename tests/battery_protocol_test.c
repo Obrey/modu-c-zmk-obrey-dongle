@@ -7,23 +7,23 @@ int main(void) {
     uint8_t p[MODU_BATTERY_PACKET_SIZE];struct modu_battery_detail out;char text[16];
     modu_battery_encode(&d,p);assert(modu_battery_decode(p,sizeof(p),&out));
     assert(out.side==1 && out.percent==0 && out.millivolts==3320 && out.sequence==23 && out.flags==0);
-    assert(!modu_battery_decode(p,11,&out));p[0]=3;assert(!modu_battery_decode(p,sizeof(p),&out));p[0]=2;
+    assert(!modu_battery_decode(p,11,&out));p[0]=4;assert(!modu_battery_decode(p,sizeof(p),&out));p[0]=3;
     p[1]=2;assert(!modu_battery_decode(p,sizeof(p),&out));p[1]=1;
     p[3]=255;assert(!modu_battery_decode(p,sizeof(p),&out));p[3]=0;
-    p[12]=2;assert(!modu_battery_decode(p,sizeof(p),&out));p[12]=0;
+    p[12]=4;assert(!modu_battery_decode(p,sizeof(p),&out));p[12]=0;
     p[13]=1;assert(!modu_battery_decode(p,sizeof(p),&out));p[13]=0;
     /* A new dongle still reads an old v6 hand. An old dongle must be upgraded. */
     p[0]=1;assert(modu_battery_decode(p,12,&out) && out.flags==0);
-    assert(!modu_battery_decode(p,sizeof(p),&out));p[0]=2;
+    assert(!modu_battery_decode(p,sizeof(p),&out));p[0]=3;
     modu_battery_format(text,sizeof(text),'L',NULL,false);assert(!strcmp(text,"L  --%"));
     modu_battery_format(text,sizeof(text),'L',&d,false);assert(!strcmp(text,"L   0%"));
     modu_battery_format(text,sizeof(text),'L',&d,true);assert(!strcmp(text,"L 3.32V"));
     d.millivolts=3330;modu_battery_format(text,sizeof(text),'R',&d,true);assert(!strcmp(text,"R 3.33V"));
-    d.millivolts=1900;modu_battery_format(text,sizeof(text),'R',&d,false);assert(!strcmp(text,"R ADC?"));
+    d.millivolts=1900;modu_battery_format(text,sizeof(text),'R',&d,false);assert(!strcmp(text,"R   0%"));
     modu_battery_format(text,sizeof(text),'R',&d,true);assert(!strcmp(text,"R 1.90V"));
     d.millivolts=4200;d.percent=100;modu_battery_format(text,sizeof(text),'R',&d,false);assert(!strcmp(text,"R 100%"));
     modu_battery_format(text,sizeof(text),'R',&d,true);assert(!strcmp(text,"R 4.20V"));
-    d.flags=MODU_BATTERY_FLAG_IDLE;d.age_seconds=300;
+    d.flags=MODU_BATTERY_FLAG_IDLE | MODU_BATTERY_FLAG_USB_POWERED;d.age_seconds=300;
     modu_battery_format(text,sizeof(text),'R',&d,false);assert(!strcmp(text,"R~100%"));
     modu_battery_format(text,sizeof(text),'R',&d,true);assert(!strcmp(text,"R~4.20V"));
     d.age_seconds=901;modu_battery_format(text,sizeof(text),'R',&d,false);assert(!strcmp(text,"R OLD"));
@@ -37,5 +37,5 @@ int main(void) {
             for(int phase=0;phase<2;phase++){modu_battery_format(text,sizeof(text),'L',&d,phase);assert(strlen(text)<=7);}
         }
     }
-    puts("PASS: v1/v2 packets, 3.32/3.33V zero preserved, cached/expired data and 56px label bounds");return 0;
+    puts("PASS: v1/v2/v3 packets, low-voltage display, USB flag, cached/expired data and 56px label bounds");return 0;
 }
