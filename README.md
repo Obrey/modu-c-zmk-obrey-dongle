@@ -77,3 +77,11 @@ MIN/MAX는 실제 셀의 안전 전압이나 충전 설정이 아니라 표시�
 **실제 ARM 펌웨어 컴파일·링크, 기판 측정, 실물 OLED, 실제 배터리 잔량 정확도는 검증하지 못했습니다.**
 새 코드가 계산/상태 테스트를 통과한 것과 실제 잔량이 맞는 것은 다른 문제입니다.
 이전 v3~v7 문서는 과거 이력이며, 이번 설치는 위의 동글 하나 업데이트가 우선입니다.
+
+## v10 deep sleep
+
+The keyboard halves now enter real ZMK deep sleep after 10 minutes of inactivity.
+The vendor right-half already uses interrupt-driven kscan; v10 makes the left half use the same
+interrupt path so keys can be used as the wake source. After deep sleep, press a key once and allow
+a few seconds for the BLE split link to reconnect. Trackball-only wake is not guaranteed.
+See `docs/V10_DEEP_SLEEP_KO.md`.

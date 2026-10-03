@@ -1,5 +1,6 @@
 /*
  * Unofficial MODU-C peripheral LED replacement.
+ * v10: compatible with ZMK deep sleep; activity/link events restore the LED after wake.
  * GPIO aliases, inverted PWM level, and L/R channel order follow the vendor
  * implementation. Original hardware material: (c) 2026 EKS Inc., Ryu.
  * SPDX-License-Identifier: LicenseRef-EKS-NonCommercial-1.0
@@ -19,8 +20,6 @@
 #include "status_logic.h"
 LOG_MODULE_REGISTER(modu_link_led, CONFIG_LOG_DEFAULT_LEVEL);
 BUILD_ASSERT(!IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL), "This LED driver is peripheral-only");
-BUILD_ASSERT(!IS_ENABLED(CONFIG_ZMK_SLEEP),
-             "MODU-C polling hardware: validate wake sources before enabling system-off sleep");
 static const struct pwm_dt_spec leds[] = {
     PWM_DT_SPEC_GET(DT_ALIAS(led_status1)),
     PWM_DT_SPEC_GET(DT_ALIAS(led_status2)),

@@ -1,0 +1,12 @@
+MODU-C v10 deep-sleep static validation
+
+PASS: CONFIG_ZMK_SLEEP=y
+PASS: CONFIG_ZMK_IDLE_SLEEP_TIMEOUT=600000 (10 minutes)
+PASS: matrix/direct kscan polling disabled in dongle peripheral override
+PASS: peripheral LED no longer rejects CONFIG_ZMK_SLEEP
+PASS: existing full-config, power, battery telemetry, battery range, status and repository validators
+
+Important limitation:
+These are source/static/native-host tests. This environment did not perform a final nRF52840 ARM build
+or a physical wake-from-System-OFF test. The pinned vendor devicetree declares wakeup-source on the
+matrix/direct/composite kscan nodes. Trackball-only wake is not promised; use a key to wake.

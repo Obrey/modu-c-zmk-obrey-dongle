@@ -1,0 +1,21 @@
+{
+  "base": "v9 empirical battery gauge",
+  "changed": [
+    "config/dongle/peripheral-power.conf",
+    "local-modules/modu-dongle/src/peripheral_status_led.c",
+    "scripts/test_power.py",
+    "scripts/test_deep_sleep.py",
+    "README.md",
+    "docs/V10_DEEP_SLEEP_KO.md",
+    "docs/V10_VALIDATION.txt"
+  ],
+  "behavior": {
+    "idle_ms": 30000,
+    "deep_sleep_ms": 600000,
+    "matrix_polling": false,
+    "direct_polling": false,
+    "wake_contract": "press a keyboard key; allow BLE split to reconnect",
+    "trackball_only_wake": "not guaranteed",
+    "dongle_deep_sleep": false
+  }
+}
