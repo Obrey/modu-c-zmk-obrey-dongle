@@ -195,12 +195,12 @@
         lower_layer {
             display-name = "Nav";
             bindings = <
-&to L_BASE  &trans  &trans              &trans          &trans              &trans  &trans   &trans     &trans     &trans     &trans    &trans
-&trans      &trans  &trans              &trans          &trans              &trans  &trans   &trans     &kp UP     &trans     &trans    &trans
-&trans      &trans  &kp LG(LC(LS(N4)))  &kp LG(LS(N5))  &trans              &trans  &kp TAB  &kp LEFT   &kp DOWN   &kp RIGHT  &kp HOME  &trans
-&trans      &trans  &trans              &trans          &kp LG(LC(LS(N3)))  &trans  &kp INS  &kp PG_UP  &kp PG_DN  &kp END    &kp RALT  &trans
-&trans      &trans  &trans              &none           &none               &none   &none    &none      &none      &trans     &trans    &trans
-&trans      &trans  &trans                                                          &trans   &trans     &trans     &none
+&trans  &trans  &trans              &trans          &trans              &trans  &trans   &trans     &trans     &trans     &trans    &trans
+&trans  &trans  &trans              &trans          &trans              &trans  &trans   &trans     &kp UP     &trans     &trans    &trans
+&trans  &trans  &kp LG(LC(LS(N4)))  &kp LG(LS(N5))  &trans              &trans  &kp TAB  &kp LEFT   &kp DOWN   &kp RIGHT  &kp HOME  &trans
+&trans  &trans  &trans              &trans          &kp LG(LC(LS(N3)))  &trans  &kp INS  &kp PG_UP  &kp PG_DN  &kp END    &kp RALT  &trans
+&trans  &trans  &trans              &none           &none               &none   &none    &none      &none      &trans     &trans    &trans
+&trans  &trans  &trans                                                          &trans   &trans     &trans     &none
             >;
         };
 
@@ -209,12 +209,12 @@
         Mouse {
             display-name = "Mouse";
             bindings = <
-&to L_BASE  &trans           &trans          &trans        &trans          &trans        &trans        &trans          &trans          &trans           &trans           &trans
-&trans      &kp LG(MINUS)    &kp LG(EQUAL)   &none         &kp LG(RBKT)    &kp LG(LBKT)  &kp LG(LBKT)  &kp LG(RBKT)    &mmv MOVE_UP    &kp LG(EQUAL)    &kp LG(MINUS)    &trans
-&trans      &none            &mkp MCLK       &mkp RCLK     &mkp LCLK       &none         &kp LG(LBKT)  &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_RIGHT  &trans           &trans
-&trans      &msc SCRL_RIGHT  &msc SCRL_LEFT  &msc SCRL_UP  &msc SCRL_DOWN  &trans        &kp LG(RBKT)  &msc SCRL_UP    &msc SCRL_DOWN  &msc SCRL_LEFT   &msc SCRL_RIGHT  &trans
-&kp TAB     &none            &trans          &none         &none           &none         &none         &none           &none           &mkp MCLK        &mkp LCLK        &mkp RCLK
-&mo L_FN    &trans           &trans                                                      &mkp RCLK     &mkp LCLK       &mkp MCLK       &none
+&trans    &trans           &trans          &trans        &trans          &trans        &trans        &trans          &trans          &trans           &trans           &trans
+&trans    &kp LG(MINUS)    &kp LG(EQUAL)   &none         &kp LG(RBKT)    &kp LG(LBKT)  &kp LG(LBKT)  &kp LG(RBKT)    &mmv MOVE_UP    &kp LG(EQUAL)    &kp LG(MINUS)    &trans
+&trans    &none            &mkp MCLK       &mkp RCLK     &mkp LCLK       &none         &kp LG(LBKT)  &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_RIGHT  &trans           &trans
+&trans    &msc SCRL_RIGHT  &msc SCRL_LEFT  &msc SCRL_UP  &msc SCRL_DOWN  &trans        &kp LG(RBKT)  &msc SCRL_UP    &msc SCRL_DOWN  &msc SCRL_LEFT   &msc SCRL_RIGHT  &trans
+&kp TAB   &none            &trans          &none         &none           &none         &none         &none           &none           &mkp MCLK        &mkp LCLK        &mkp RCLK
+&mo L_FN  &trans           &trans                                                      &mkp RCLK     &mkp LCLK       &mkp MCLK       &none
             >;
         };
 
@@ -237,12 +237,12 @@
         FnMedia {
             display-name = "FnMedia";
             bindings = <
-&kp F11  &kp F1     &kp F2     &kp F3     &kp F4        &kp F5          &kp F6        &kp F7        &kp F8        &kp F9        &kp F10       &kp F12
-&trans   &kp GRAVE  &kp PSCRN  &kp SLCK   &kp C_PAUSE   &kp CAPSLOCK    &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4  &kp K_APP
-&trans   &trans     &trans     &trans     &trans        &to 3           &kp C_PREV    &kp C_PP      &kp C_NEXT    &kp C_VOL_DN  &kp C_VOL_UP  &kp C_MUTE
-&trans   &kp LBKT   &kp RBKT   &mkp MCLK  &msc SCRL_UP  &msc SCRL_DOWN  &out OUT_USB  &out OUT_BLE  &out OUT_TOG  &kp APOS      &trans        &trans
-&trans   &trans     &trans     &none      &none         &none           &none         &none         &none         &trans        &trans        &trans
-&trans   &trans     &trans                                              &trans        &trans        &trans        &none
+&kp GRAVE  &kp F1     &kp F2     &kp F3     &kp F4        &kp F5          &kp F6        &kp F7        &kp F8        &kp F9        &kp F10       &sys_reset
+&trans     &kp GRAVE  &kp PSCRN  &kp SLCK   &kp C_PAUSE   &kp CAPSLOCK    &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4  &kp K_APP
+&trans     &trans     &trans     &trans     &trans        &to 3           &kp C_PREV    &kp C_PP      &kp C_NEXT    &kp C_VOL_DN  &kp C_VOL_UP  &kp C_MUTE
+&trans     &kp LBKT   &kp RBKT   &mkp MCLK  &msc SCRL_UP  &msc SCRL_DOWN  &out OUT_USB  &out OUT_BLE  &out OUT_TOG  &kp APOS      &trans        &trans
+&trans     &trans     &trans     &none      &none         &none           &none         &none         &none         &trans        &trans        &trans
+&trans     &trans     &trans                                              &trans        &trans        &trans        &none
             >;
         };
 
