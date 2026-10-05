@@ -1,0 +1,11 @@
+MODU-C v12 source validation
+
+PASS: config/modu.keymap byte-for-byte unchanged from v11 custom keymap.
+PASS: CONFIG_ZMK_SLEEP=n; no automatic Deep Sleep/System OFF on halves.
+PASS: CONFIG_ZMK_KSCAN_MATRIX_POLLING=y and CONFIG_ZMK_KSCAN_DIRECT_POLLING=y.
+PASS: 30-second ZMK IDLE timeout retained for both charging and battery use.
+PASS: charge mode retains normal keys/trackball/BLE and suppresses status LED / slows custom battery telemetry.
+PASS: build matrix still applies the same peripheral power config to both halves.
+PASS: package/UF2 structural self-tests, full-config tests, status tests, battery telemetry tests, power tests, battery range tests, and charge-mode tests passed locally.
+
+LIMITATION: This is source/host validation, not an nRF52840 ARM build or physical current/wake measurement. The generated GitHub Actions build should still be checked before flashing.

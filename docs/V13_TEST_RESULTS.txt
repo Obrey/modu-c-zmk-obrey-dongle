@@ -1,0 +1,12 @@
+MODU-C v13 source validation
+
+Target policy:
+- PASS: 30-second ZMK IDLE on both battery and charging power.
+- PASS: 2-hour (7,200,000 ms) ZMK Deep Sleep timeout on both halves.
+- PASS: vendor-compatible matrix/direct polling retained for the IDLE stage.
+- PASS: charge-mode LED suppression / reduced telemetry retained.
+- PASS: user keymap provenance hash unchanged.
+
+Limitation:
+- This is source/static validation, not an nRF52840 hardware wake or current measurement.
+- Key/trackball wake after the 2-hour Deep Sleep threshold is not guaranteed; Reset/power-cycle is the reliable fallback.

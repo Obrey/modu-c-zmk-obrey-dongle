@@ -59,9 +59,9 @@ int main(void) {
     assert(details[1].millivolts==2730);
     assert(!strcmp(power_label->text,"D  42%"));
     mock_clock=3000;refresh_batteries(NULL);
-    assert(!strcmp(half_labels[0]->text,"L 2.73V"));
+    assert(!strcmp(half_labels[0]->text,"L  82%"));
     details[1].flags=MODU_BATTERY_FLAG_IDLE;details[1].age_seconds=300;
-    refresh_batteries(NULL);assert(!strcmp(half_labels[0]->text,"L~2.73V"));
+    refresh_batteries(NULL);assert(!strcmp(half_labels[0]->text,"L~ 82%"));
     mock_clock=0;refresh_batteries(NULL);assert(!strcmp(half_labels[0]->text,"L~ 82%"));
     details[1].age_seconds=901;refresh_batteries(NULL);assert(!strcmp(half_labels[0]->text,"L OLD"));
     details[1].flags=0;details[1].age_seconds=0;details[1].result=MODU_BAT_FETCH_ERROR;

@@ -84,6 +84,22 @@ config MODU_BATTERY_TELEMETRY_CENTRAL
     help
       Periodically polls the read-only diagnostic characteristic on each
       existing split link. Does not connect to additional devices.
+config MODU_CHARGE_MODE
+    bool "Reduce non-input load while a keyboard half is on USB power"
+    depends on MODU_BATTERY_TELEMETRY_PERIPHERAL
+    default y
+    help
+      Read nRF52840 VBUS status directly. While powered from USB, keep key input,
+      split BLE and the trackball at normal responsiveness, turn the status LED
+      off, and sample battery telemetry less often. Does not modify charger
+      current, battery voltage, regulator settings, or HID routing.
+
+config MODU_BATTERY_CHARGE_INTERVAL
+    int "Battery telemetry interval while USB powered (seconds)"
+    depends on MODU_CHARGE_MODE
+    range 300 1800
+    default 600
+
 config MODU_BATTERY_ACTIVE_INTERVAL
     int "Active keyboard diagnostic sample interval in seconds"
     depends on MODU_BATTERY_TELEMETRY_PERIPHERAL
@@ -126,27 +142,5 @@ config MODU_BATTERY_RANGE_RIGHT_MAX_MV
     int "Right empirical unplugged-full reading (mV)"
     range 1001 4500
     default 2950
-endif
-
-config MODU_UNIVERSAL_DEEP_SLEEP
-    bool "Allow keyboard halves to enter System OFF even while USB/VBUS is present"
-    depends on ZMK_SPLIT && !ZMK_SPLIT_ROLE_CENTRAL && ZMK_SLEEP
-    default n
-    help
-      ZMK normally suppresses automatic deep sleep while USB power is detected.
-      MODU-C halves are BLE peripherals, so this option adds a second inactivity
-      guard that enters the same device-suspend + System OFF path regardless of
-      USB/VBUS presence. This does not change charger current or charging IC logic.
-
-if MODU_UNIVERSAL_DEEP_SLEEP
-config MODU_UNIVERSAL_DEEP_SLEEP_TIMEOUT_MS
-    int "Total inactivity before universal System OFF (milliseconds)"
-    range 60000 1800000
-    default 120000
-    help
-      Total inactivity from the last key/pointing activity. The implementation
-      waits for normal ZMK Idle first, then sleeps after the remaining interval.
-      With ZMK_IDLE_TIMEOUT=30000 and this value=120000, System OFF occurs at
-      about two minutes of inactivity whether charging or running on battery.
 endif
 endmenu

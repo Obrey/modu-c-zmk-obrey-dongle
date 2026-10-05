@@ -1,6 +1,6 @@
 /*
  * Unofficial MODU-C peripheral LED replacement.
- * v10: compatible with ZMK deep sleep; activity/link events restore the LED after wake.
+ * v13: two-stage standby LED policy; activity/link events restore the LED immediately.
  * GPIO aliases, inverted PWM level, and L/R channel order follow the vendor
  * implementation. Original hardware material: (c) 2026 EKS Inc., Ryu.
  * SPDX-License-Identifier: LicenseRef-EKS-NonCommercial-1.0
@@ -18,6 +18,7 @@
 #include <zmk/events/split_peripheral_status_changed.h>
 #include <zmk/split/bluetooth/peripheral.h>
 #include "status_logic.h"
+#include "peripheral_power_state.h"
 LOG_MODULE_REGISTER(modu_link_led, CONFIG_LOG_DEFAULT_LEVEL);
 BUILD_ASSERT(!IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL), "This LED driver is peripheral-only");
 static const struct pwm_dt_spec leds[] = {
@@ -37,7 +38,9 @@ static void update_led(struct k_work *work) {
     const bool bonded = zmk_split_bt_peripheral_is_bonded();
     const bool right = IS_ENABLED(CONFIG_SHIELD_MODU_RIGHT);
     unsigned channel = modu_led_channel(right, connected);
-    bool visible = active && modu_led_visible(connected, bonded, k_uptime_get_32());
+    const bool charging = IS_ENABLED(CONFIG_MODU_CHARGE_MODE) && modu_peripheral_vbus_present();
+    /* Charge mode never touches keys, BLE, or the trackball. It only removes LED load. */
+    bool visible = active && !charging && modu_led_visible(connected, bonded, k_uptime_get_32());
     for (unsigned i = 0; i < ARRAY_SIZE(leds); i++) {
         uint32_t level = (visible && i == channel) ? CONFIG_MODU_STATUS_LED_BRIGHTNESS : 0;
         if (last_level[i] == (int)level) continue;

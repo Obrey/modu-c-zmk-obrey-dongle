@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Native regressions. These are NOT an ARM build or a hardware wake test."""
+"""Native regressions. These are NOT an ARM build or a hardware power measurement."""
 from pathlib import Path
 import hashlib, re, shutil, subprocess, tempfile, unittest
 from validate import _parse_build_entries
@@ -20,37 +20,28 @@ class PowerTests(unittest.TestCase):
                     f'-DCONFIG_SHIELD_MODU_RIGHT={right}',f'-DCONFIG_SHIELD_MODU_LEFT={1-right}',
                     '-I'+str(inc),'-I'+str(ROOT/'tests'),str(ROOT/'tests/power_led_test.c'),'-o',str(out)],check=True)
                 subprocess.run([str(out)],check=True)
-    def test_deep_sleep_settings_are_applied_to_both_halves(self):
+    def test_two_stage_power_settings_are_applied_to_both_halves(self):
         entries=_parse_build_entries((ROOT/'build.yaml').read_text())
         for e in entries[:2]: self.assertIn('config/dongle/peripheral-power.conf',e['cmake'])
         cfg=(ROOT/'config/dongle/peripheral-power.conf').read_text()
-        for line in ('CONFIG_ZMK_SLEEP=y','CONFIG_ZMK_IDLE_TIMEOUT=30000',
-            'CONFIG_ZMK_IDLE_SLEEP_TIMEOUT=600000',
-            'CONFIG_MODU_UNIVERSAL_DEEP_SLEEP=y',
-            'CONFIG_MODU_UNIVERSAL_DEEP_SLEEP_TIMEOUT_MS=120000',
-            'CONFIG_ZMK_KSCAN_MATRIX_POLLING=n','CONFIG_ZMK_KSCAN_DIRECT_POLLING=n',
+        for line in ('CONFIG_ZMK_SLEEP=y','CONFIG_ZMK_IDLE_TIMEOUT=600000','CONFIG_ZMK_IDLE_SLEEP_TIMEOUT=7200000',
+            'CONFIG_ZMK_KSCAN_MATRIX_POLLING=y','CONFIG_ZMK_KSCAN_DIRECT_POLLING=y',
             'CONFIG_MODU_STATUS_LED_BRIGHTNESS=6','CONFIG_MODU_BATTERY_ACTIVE_INTERVAL=60',
             'CONFIG_MODU_BATTERY_IDLE_INTERVAL=300'):
             self.assertIn(line,cfg)
         self.assertNotIn('CONFIG_PMW3610_ALT_POLL_INTERVAL_MS=0',cfg)
         self.assertNotIn('bt_unpair',(SRC/'peripheral_status_led.c').read_text())
-        universal=(SRC/'universal_deep_sleep.c').read_text()
-        self.assertIn('sys_poweroff();',universal)
-        self.assertIn('zmk_pm_suspend_devices()',universal)
-        self.assertNotIn('zmk_usb_is_powered',universal)
     def test_no_sensor_calibration_guess_or_keymap_change(self):
-        # Regression snapshot only: user keymap edits remain allowed by CI.
         import json
         info=json.loads((ROOT/'docs/KEYMAP_PROVENANCE.json').read_text())
         sha=hashlib.sha256((ROOT/'config/modu.keymap').read_bytes()).hexdigest()
-        if sha!=info['canonical_sha256']: print('INFO: user keymap differs from snapshot; allowed.')
+        self.assertEqual(sha,info['canonical_sha256'])
         for f in (ROOT/'config/dongle').glob('*.overlay'):
             self.assertNotIn('full-ohms',f.read_text()); self.assertNotIn('io-channels',f.read_text())
         self.assertNotIn('lithium_ion_mv_to_pct',(SRC/'battery_telemetry_peripheral.c').read_text())
-    def test_telemetry_stops_before_deep_sleep(self):
+    def test_idle_telemetry_keeps_wake_path_alive(self):
         code=(SRC/'battery_telemetry_peripheral.c').read_text()
         self.assertIn('zmk_activity_get_state()',code)
-        self.assertIn('k_work_cancel_delayable',code)
         self.assertNotIn('sys_poweroff',code)
         self.assertNotIn('K_TIMER_DEFINE',code)
         self.assertIn('MODU_BATTERY_FLAG_IDLE',code)

@@ -251,11 +251,10 @@ static void refresh_batteries(lv_timer_t *timer) {
             bool have_detail = source >= 0 && modu_battery_detail_for_peer(live[source].peer, &d);
 #if IS_ENABLED(CONFIG_MODU_BATTERY_RANGE_DISPLAY)
             modu_battery_format_range(text, sizeof(text), hand, have_detail ? &d : NULL,
-                                      ((k_uptime_get() / 3000) % 2) != 0,
-                                      &display_ranges[side]);
+                                      false, &display_ranges[side]);
 #else
             modu_battery_format(text, sizeof(text), hand, have_detail ? &d : NULL,
-                                ((k_uptime_get() / 3000) % 2) != 0);
+                                false);
 #endif
         }
 #else

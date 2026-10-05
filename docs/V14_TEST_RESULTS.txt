@@ -1,0 +1,8 @@
+MODU-C v14 source validation
+- Idle timeout: 600000 ms (10 min)
+- Deep Sleep timeout: 7200000 ms (2 h)
+- Deep Sleep enabled on both halves
+- Polling wake path retained during connected IDLE
+- Charge low-load mode retained
+- Custom keymap byte-identical to v13
+- Source regression tests: PASS

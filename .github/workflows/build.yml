@@ -44,8 +44,12 @@ jobs:
         run: python3 scripts/test_battery_telemetry.py
       - name: Connected standby, LED and battery interval regression checks
         run: python3 scripts/test_power.py
+      - name: Reliable key and trackball standby/wake policy
+        run: python3 scripts/test_standby_wake.py
       - name: Observed voltage range display and compatibility (not battery calibration)
         run: python3 scripts/test_battery_range.py
+      - name: Charge-aware power mode and custom keymap regression
+        run: python3 scripts/test_charge_mode.py
 
   build:
     name: Build keyboard halves, dongle variants, and reset firmware

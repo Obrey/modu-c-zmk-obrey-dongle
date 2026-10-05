@@ -19,8 +19,8 @@
 #include <zmk/events/activity_state_changed.h>
 #include <zmk/events/split_peripheral_status_changed.h>
 #include <zmk/split/bluetooth/peripheral.h>
-#include <zmk/usb.h>
 #include "battery_telemetry_protocol.h"
+#include "peripheral_power_state.h"
 
 LOG_MODULE_REGISTER(modu_battery_sensor, CONFIG_LOG_DEFAULT_LEVEL);
 #if !DT_HAS_CHOSEN(zmk_battery)
@@ -44,6 +44,9 @@ static int64_t sampled_at = -1;
 static void sample_work_fn(struct k_work *work);
 K_WORK_DELAYABLE_DEFINE(modu_battery_sample_work, sample_work_fn);
 static unsigned sample_interval(void) {
+    if (IS_ENABLED(CONFIG_MODU_CHARGE_MODE) && modu_peripheral_vbus_present()) {
+        return CONFIG_MODU_BATTERY_CHARGE_INTERVAL;
+    }
     return zmk_activity_get_state() == ZMK_ACTIVITY_ACTIVE ?
         CONFIG_MODU_BATTERY_ACTIVE_INTERVAL : CONFIG_MODU_BATTERY_IDLE_INTERVAL;
 }
@@ -105,7 +108,7 @@ static ssize_t read_detail(struct bt_conn *conn, const struct bt_gatt_attr *attr
     k_spin_unlock(&detail_lock, key);
     bool active = zmk_activity_get_state() == ZMK_ACTIVITY_ACTIVE;
     snapshot.flags = active ? 0 : MODU_BATTERY_FLAG_IDLE;
-    if (zmk_usb_is_powered()) snapshot.flags |= MODU_BATTERY_FLAG_USB_POWERED;
+    if (modu_peripheral_vbus_present()) snapshot.flags |= MODU_BATTERY_FLAG_USB_POWERED;
     if (snapshot.result == MODU_BAT_WAIT ||
         (active && snapshot.age_seconds >= CONFIG_MODU_BATTERY_ACTIVE_INTERVAL)) queue_sample();
     uint8_t packet[MODU_BATTERY_PACKET_SIZE];
