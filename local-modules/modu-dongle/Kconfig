@@ -127,4 +127,26 @@ config MODU_BATTERY_RANGE_RIGHT_MAX_MV
     range 1001 4500
     default 2950
 endif
+
+config MODU_UNIVERSAL_DEEP_SLEEP
+    bool "Allow keyboard halves to enter System OFF even while USB/VBUS is present"
+    depends on ZMK_SPLIT && !ZMK_SPLIT_ROLE_CENTRAL && ZMK_SLEEP
+    default n
+    help
+      ZMK normally suppresses automatic deep sleep while USB power is detected.
+      MODU-C halves are BLE peripherals, so this option adds a second inactivity
+      guard that enters the same device-suspend + System OFF path regardless of
+      USB/VBUS presence. This does not change charger current or charging IC logic.
+
+if MODU_UNIVERSAL_DEEP_SLEEP
+config MODU_UNIVERSAL_DEEP_SLEEP_TIMEOUT_MS
+    int "Total inactivity before universal System OFF (milliseconds)"
+    range 60000 1800000
+    default 120000
+    help
+      Total inactivity from the last key/pointing activity. The implementation
+      waits for normal ZMK Idle first, then sleeps after the remaining interval.
+      With ZMK_IDLE_TIMEOUT=30000 and this value=120000, System OFF occurs at
+      about two minutes of inactivity whether charging or running on battery.
+endif
 endmenu

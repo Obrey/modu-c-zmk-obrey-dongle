@@ -1,0 +1,32 @@
+{
+  "base": "v10 deep sleep + existing user keymap",
+  "changed": [
+    "config/dongle/peripheral-power.conf",
+    "local-modules/modu-dongle/Kconfig",
+    "local-modules/modu-dongle/CMakeLists.txt",
+    "local-modules/modu-dongle/src/universal_deep_sleep.c",
+    "scripts/test_power.py",
+    "scripts/test_deep_sleep.py",
+    "README.md",
+    "docs/V11_UNIVERSAL_SLEEP_KO.md",
+    "docs/V11_VALIDATION.txt",
+    "docs/V11_TEST_RESULTS.txt"
+  ],
+  "behavior": {
+    "idle_ms": 30000,
+    "universal_system_off_total_inactivity_ms": 120000,
+    "zmk_fallback_deep_sleep_ms": 600000,
+    "usb_vbus_exception": false,
+    "physical_switch_sense": false,
+    "wake_contract": "press a keyboard key; allow BLE split to reconnect",
+    "trackball_only_wake": "not guaranteed",
+    "dongle_deep_sleep": false
+  },
+  "unchanged": [
+    "config/modu.keymap",
+    "left/right boot keys",
+    "split roles",
+    "pointing paths",
+    "battery telemetry protocol/UI"
+  ]
+}

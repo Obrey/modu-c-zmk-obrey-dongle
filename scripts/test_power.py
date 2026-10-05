@@ -26,12 +26,18 @@ class PowerTests(unittest.TestCase):
         cfg=(ROOT/'config/dongle/peripheral-power.conf').read_text()
         for line in ('CONFIG_ZMK_SLEEP=y','CONFIG_ZMK_IDLE_TIMEOUT=30000',
             'CONFIG_ZMK_IDLE_SLEEP_TIMEOUT=600000',
+            'CONFIG_MODU_UNIVERSAL_DEEP_SLEEP=y',
+            'CONFIG_MODU_UNIVERSAL_DEEP_SLEEP_TIMEOUT_MS=120000',
             'CONFIG_ZMK_KSCAN_MATRIX_POLLING=n','CONFIG_ZMK_KSCAN_DIRECT_POLLING=n',
             'CONFIG_MODU_STATUS_LED_BRIGHTNESS=6','CONFIG_MODU_BATTERY_ACTIVE_INTERVAL=60',
             'CONFIG_MODU_BATTERY_IDLE_INTERVAL=300'):
             self.assertIn(line,cfg)
         self.assertNotIn('CONFIG_PMW3610_ALT_POLL_INTERVAL_MS=0',cfg)
         self.assertNotIn('bt_unpair',(SRC/'peripheral_status_led.c').read_text())
+        universal=(SRC/'universal_deep_sleep.c').read_text()
+        self.assertIn('sys_poweroff();',universal)
+        self.assertIn('zmk_pm_suspend_devices()',universal)
+        self.assertNotIn('zmk_usb_is_powered',universal)
     def test_no_sensor_calibration_guess_or_keymap_change(self):
         # Regression snapshot only: user keymap edits remain allowed by CI.
         import json

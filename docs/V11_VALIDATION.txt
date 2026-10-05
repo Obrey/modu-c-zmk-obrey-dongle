@@ -1,0 +1,16 @@
+MODU-C v11 universal charge-focus sleep static/native validation
+
+PASS: normal ZMK Idle remains 30000 ms
+PASS: MODU universal System OFF timeout is 120000 ms total inactivity
+PASS: universal sleep path does not consult zmk_usb_is_powered(), so VBUS/charging does not block it
+PASS: device suspension is requested before sys_poweroff()
+PASS: matrix/direct kscan polling remains disabled in the dongle peripheral override
+PASS: existing peripheral LED, battery telemetry/range, status, full-config, packaging and repository validators
+PASS: config/modu.keymap SHA256 is unchanged from the user-uploaded v10 ZIP
+
+Important limitations:
+- These checks are source/static/native-host tests, not a final nRF52840 ARM/Zephyr compile.
+- This environment did not physically verify wake from System OFF while USB/VBUS remains attached.
+- This does not change charger current or the board's charging circuit. Whether the battery can charge
+  with the physical switch OFF is a hardware property of the board.
+- Wake contract remains: press a keyboard key; trackball-only wake is not guaranteed.

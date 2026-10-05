@@ -1,0 +1,20 @@
+MODU-C v11 test run
+
+PASS: scripts/test_deep_sleep.py
+PASS: scripts/test_power.py (4/4 unittest methods)
+PASS: scripts/test_battery_telemetry.py (3/3 unittest methods + native mocks)
+PASS: scripts/test_battery_range.py (7/7 unittest methods + native mocks)
+PASS: scripts/test_status.py (12/12 unittest methods + native helpers)
+PASS: scripts/test_full_config.py (14/14 unittest methods)
+PASS: scripts/validate.py
+PASS: scripts/selftest.py
+
+Observed regression checks include:
+- both halves use config/dongle/peripheral-power.conf
+- 30 s Idle + 120 s total universal System OFF setting is present
+- universal System OFF suspends devices and deliberately has no USB-power guard
+- keymap edits remain allowed; v11 itself did not modify config/modu.keymap
+- left/right pointing paths, dongle roles, battery telemetry and OLED/status adapters still pass existing checks
+
+Not performed here: final ARM/Zephyr build, flashing, physical USB-attached System OFF test,
+physical wake test, or charge-current measurement.

@@ -85,3 +85,17 @@ The vendor right-half already uses interrupt-driven kscan; v10 makes the left ha
 interrupt path so keys can be used as the wake source. After deep sleep, press a key once and allow
 a few seconds for the BLE split link to reconnect. Trackball-only wake is not guaranteed.
 See `docs/V10_DEEP_SLEEP_KO.md`.
+
+
+## v11 universal charge-focus sleep
+
+Both keyboard halves now enter System OFF after about **2 minutes of total inactivity**,
+whether they are running from the battery or have USB/VBUS power attached. The normal
+ZMK 30-second Idle state is still used first; v11 then forces the same device-suspend +
+`sys_poweroff()` path after the remaining inactivity interval without applying ZMK's usual
+"stay awake while USB powered" exception. This is intended to minimize keyboard-side load
+while charging, but it does **not** increase charger current or alter the charging IC.
+
+Wake behavior is unchanged from v10: press a keyboard key and allow the BLE split link to
+reconnect. Trackball-only wake is not guaranteed. The dongle firmware is not put into this
+automatic System OFF mode. See `docs/V11_UNIVERSAL_SLEEP_KO.md`.
