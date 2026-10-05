@@ -8,7 +8,7 @@
  * Base: hold 5 alone for 3s, keep holding and tap 1 -> left boot.
  * Base: hold 6 alone for 3s, keep holding and tap 0 -> right boot.
  * Boot uses standard positional hold-taps + direct source-specific &bootloader.
- * Base typing combos: D+F -> Space, S+D -> Caps Lock.
+ * Base typing combos: D+F -> Caps Lock, S+D -> Space.
  * Base left macro column: Tab -> Undo/Select -> Cut/Copy -> Paste.
  * Hold right Backspace for Numpad; hold right Enter for SymbolPad.
  * Hold the far-left thumb Escape for Fn; tap behavior remains Escape.
@@ -146,17 +146,17 @@
             layers = <L_BASE>;
         };
 
-        space_df {
+        caps_df {
             timeout-ms = <50>;
             key-positions = <27 28>;
-            bindings = <&kp SPACE>;
+            bindings = <&kp CAPSLOCK>;
             layers = <L_BASE>;
         };
 
-        caps_sd {
+        space_sd {
             timeout-ms = <50>;
             key-positions = <26 27>;
-            bindings = <&kp CAPSLOCK>;
+            bindings = <&kp SPACE>;
             layers = <L_BASE>;
         };
 
