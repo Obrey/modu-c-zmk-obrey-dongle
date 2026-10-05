@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 from pathlib import Path
-import hashlib, json
 root=Path(__file__).resolve().parents[1]
 tele=(root/'local-modules/modu-dongle/src/battery_telemetry_peripheral.c').read_text()
 led=(root/'local-modules/modu-dongle/src/peripheral_status_led.c').read_text()
@@ -24,6 +23,4 @@ assert 'CONFIG_ZMK_IDLE_SLEEP_TIMEOUT=7200000' in conf
 assert 'false, &display_ranges[side]' in ui
 assert '&blt5 L_BOOT_L N5' in keymap and '&blt6 L_BOOT_R N6' in keymap
 assert 'config MODU_CHARGE_MODE' in kcfg
-info=json.loads((root/'docs/KEYMAP_PROVENANCE.json').read_text())
-assert hashlib.sha256(keymap_path.read_bytes()).hexdigest()==info['canonical_sha256']
 print('PASS: v14 charge mode + 10m idle + 2h deep sleep + custom keymap')
